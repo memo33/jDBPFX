@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="properties" targetNamespace="http://tempuri.org/properties.xsd" elementFormDefault="qualified" xmlns="http://tempuri.org/properties.xsd" xmlns:mstns="http://tempuri.org/properties.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="exemplars">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="properties">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="group">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="property">
+											<xs:complexType>
+												<xs:sequence></xs:sequence>
+												<xs:attribute name="num" type="xs:string" />
+												<xs:attribute name="type" type="xs:string" />
+												<xs:attribute name="name" type="xs:string" />
+												<xs:attribute name="desc" type="xs:string" />
+												<xs:attribute name="example" type="xs:string" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
