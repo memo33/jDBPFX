@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jDBPFX" default="dist" basedir=".">
+    <property name="targetversion" value="1.6" />
+    <property name="project.version" value="1.0" />
+    <property name="MyApp" value="${ant.project.name}-${project.version}" />
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="bin.dir" value="${basedir}/bin" />
+    <property name="doc.dir" value="${basedir}/doc" />
+    <property name="dist.dir" value="${basedir}/dist" />
+
+    <path id="compile.classpath">
+        <!--<fileset dir="lib" />-->
+        <pathelement path="${bin.dir}" />
+    </path>
+
+    <target name="compile" description="compile the sources">
+        <mkdir dir="${bin.dir}" />
+        <javac target="${targetversion}" srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="false">
+            <classpath refid="compile.classpath" />
+        </javac>
+    </target>
+
+    <target name="doc" description="generate documentation">
+        <mkdir dir="${doc.dir}" />
+        <javadoc
+            sourcepath="${src.dir}"
+            destdir="${doc.dir}"
+            packagenames="*"
+            link="http://docs.oracle.com/javase/7/docs/api/"
+        />
+    </target>
+
+    <target name="manifest" >
+        <manifest file="${basedir}/manifest.txt" />
+    </target>
+
+    <target name="dist" depends="compile,doc,manifest" description="create binary distribution with sources and documentation">
+        <delete file="${MyApp}.jar" />
+        <delete file="${dist.dir}/${MyApp}.zip" />
+        <mkdir dir="${dist.dir}" />
+        <jar jarfile="${dist.dir}/${MyApp}.jar" basedir="${bin.dir}" manifest="manifest.txt" />
+        <jar jarfile="${dist.dir}/${MyApp}-sources.jar" basedir="${src.dir}" manifest="manifest.txt">
+            <fileset dir="${basedir}" includes="build.xml" />
+        </jar>
+        <jar jarfile="${dist.dir}/${MyApp}-javadoc.jar" basedir="${doc.dir}" manifest="manifest.txt" />
+        <zip destfile="${dist.dir}/${MyApp}.zip">
+            <fileset dir="${dist.dir}" includes="${MyApp}*.jar" />
+        </zip>
+    </target>
+</project>
