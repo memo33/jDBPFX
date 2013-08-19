@@ -1,5 +1,8 @@
 package jdpbfx;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import jdpbfx.util.DBPFUtil;
 
 /**
@@ -7,19 +10,16 @@ import jdpbfx.util.DBPFUtil;
  * TGI objects are immutable.  Each component is limited to 32 bits or the null
  * value -1 (used as a mask in certain functions).
  * <p>
- * The method {@link DBPFTGI#matches(Mask)} may be used to determine
+ * The method {@link DBPFTGI#matches(DBPFTGI)} may be used to determine
  * whether a TGI matches a particular format, that is, a known file type.
  * <p>
- * Only the unique TGIs {@link #BLANKTGI}, {@link #NULLTGI} and {@link #DIRECTORY} are
- * declared as constants in this class. However, masks for the common file types
- * can be found in {@link DBPFTGI.Mask}. 
+ * Masks for the common file types are declared as constants in this class and
+ * may be used with this method.
  * 
  * @author jondor
  * @author memo
- *
- * @see DBPFTGI.Mask
  */
-public final class DBPFTGI {
+public class DBPFTGI {
 
     private final long type;
     private final long group;
@@ -69,42 +69,43 @@ public final class DBPFTGI {
     public long getInstance() {
         return this.instance;
     }
-    
+
     /**
      * Returns a string representing the type of this TGI.
      *
      * @return The representative string or UNKNOWN, if TGI is not recognized.
      */
     public String getLabel() {
-        for (Mask key : Mask.values()) {
-            if (this.matches(key)) {
-                return key.label;
+        for (Mask mask : Mask.values) {
+            if (this.matches(mask)) {
+                return mask.label;
             }
         }
-        return Mask.NULLTGI.label;
+        // cannot occur as NULLTGI always matches
+        throw new RuntimeException("Compilation problem: NULLTGI has not been added to Mask.values.");
     }
-    
+
     /**
      * @return TRUE if the type identifier of this TGI is null (-1L).
      */
     public boolean isTypeNull() {
         return this.type == -1L;
     }
-    
+
     /**
      * @return TRUE if the group identifier of this TGI is null (-1L).
      */
     public boolean isGroupNull() {
         return this.group == -1L;
     }
-    
+
     /**
      * @return TRUE if the instance identifier of this TGI is null (-1L).
      */
     public boolean isInstanceNull() {
         return this.instance == -1L;
     }
-    
+
     /**
      * @return TRUE if any component of this TGI is null (-1L).
      */
@@ -151,22 +152,9 @@ public final class DBPFTGI {
     }
 
     /**
-     * Check if this TGI matches a given {@link DBPFTGI.Mask}.
-     * 
-     * @param tgiMask the TGI Mask to check against.
-     * @return TRUE, if the check passes; FALSE, otherwise.
-     * 
-     * @see #matches(DBPFTGI)
-     */
-    public boolean matches(Mask tgiMask) {
-        return this.matches(tgiMask.tgi);
-    }
-    
-    /**
      * Check if this TGI matches a given masked TGI.
      * <p>
-     * Whenever possible, the method {@link #matches(Mask)} should be preferred
-     * over this method.
+     * {@code DBPFTGI} constants are useful here.
      * <p>
      * If any component of tgiMask is null (-1L), it will be skipped.
      * Compare with {@link #equals(java.lang.Object)} which explicitly checks each component.
@@ -203,11 +191,11 @@ public final class DBPFTGI {
             return new DBPFTGI(this.type, this.group, this.instance);
         } else {
             return this.modifyTGI(modifier.getType(),
-                                  modifier.getGroup(),
-                                  modifier.getInstance());
+                    modifier.getGroup(),
+                    modifier.getInstance());
         }
     }
-    
+
     /**
      * Modifies and returns a new TGI using the fields of this and another TGI.
      * <p>
@@ -222,120 +210,117 @@ public final class DBPFTGI {
      */
     public DBPFTGI modifyTGI(long t, long g, long i) {
         return new DBPFTGI(t == -1L ? this.type : t,
-                           g == -1L ? this.group : g,
-                           i == -1L ? this.instance : i);
+                g == -1L ? this.group : g,
+                        i == -1L ? this.instance : i);
     }
 
-    /** 
-     * NULLTGI (-1, -1, -1)
-     */
-    public static final DBPFTGI NULLTGI = new DBPFTGI(-1L, -1L, -1L);
+    /** BLANKTGI <p> (0, 0, 0) */
+    public static final DBPFTGI BLANKTGI;
 
-    /**
-     * BLANKTGI (0, 0, 0)
-     */
-    public static final DBPFTGI BLANKTGI = new DBPFTGI(0L, 0L, 0L);
+    /** Directory file <p> (0xe86b1eef, 0xe86b1eef, 0x286b1f03) */
+    public static final DBPFTGI DIRECTORY;
 
-    /**
-     *  Directory file
-     */
-    public static final DBPFTGI DIRECTORY = new DBPFTGI(0xe86b1eefL, 0xe86b1eefL, 0x286b1f03L);
+    /** LD file <p> (0x6be74c60, 0x6be74c60, -1) */
+    public static final DBPFTGI LD;
 
-    /**
-     * An Enumeration of a number of common TGI Masks of file types that are
-     * particularly suited for the {@link DBPFTGI#matches(Mask)} test.
-     * 
-     * @author memo
-     */
-    public static enum Mask {
+    /** Exemplar file: LotInfo, LotConfig <p> (0x6534284a, -1, -1) */
+    public static final DBPFTGI EXEMPLAR;
+
+    /** Cohort file <p> (0x05342861, -1, -1) */
+    public static final DBPFTGI COHORT;
+
+    /** PNG file: Menu building icons, bridges, overlays <p> (0x856ddbac, 0x6a386d26, -1) */
+    public static final DBPFTGI PNG_ICON;
+
+    /** PNG file (image, icon) <p> (0x856ddbac, -1, -1) */
+    public static final DBPFTGI PNG;
+
+    /** FSH file: Textures <p> (0x7ab50e44, -1, -1) */
+    public static final DBPFTGI FSH;
+
+    /** S3D file: Models <p> (0x5ad0e817, -1, -1) */
+    public static final DBPFTGI S3D;
+
+    /** SC4PATH (2D) <p> (0x296678f7, 0x69668828, -1) */
+    public static final DBPFTGI SC4PATH_2D;
+
+    /** SC4PATH (3D) <p> (0x296678f7, 0xa966883f, -1) */
+    public static final DBPFTGI SC4PATH_3D;
+
+    /** SC4PATH file <p> (0x296678f7, -1, -1) */
+    public static final DBPFTGI SC4PATH;
+
+    /** LUA file: Missions, Advisors, Tutorials and Packaging files <p> (0xca63e2a3, 0x4a5e8ef6, -1) */
+    public static final DBPFTGI LUA;
+
+    /** LUA file: Generators, Attractors, Repulsors and System LUA <p> (0xca63e2a3, 0x4a5e8f3f, -1) */
+    public static final DBPFTGI LUA_GEN;
+
+    /** RUL file: Network rules <p> (0x0a5bcf4b, 0xaa5bcf57, -1) */
+    public static final DBPFTGI RUL;
+
+    /** WAV file <p> (0x2026960b, 0xaa4d1933, -1) */
+    public static final DBPFTGI WAV;
+
+    /** LTEXT or WAV file <p> (0x2026960b, -1, -1) */
+    public static final DBPFTGI LTEXT;
+
+    /** Effect Directory file <p> (0xea5118b0, -1, -1) */
+    public static final DBPFTGI EFFDIR;
+
+    /** Font Table INI <p> (0, 0x4a87bfe8, 0x2a87bffc) */
+    public static final DBPFTGI INI_FONT;
+
+    /** Network INI: Remapping, Bridge Exemplars <p> (0, 0x8a5971c5, 0x8a5993b9) */
+    public static final DBPFTGI INI_NETW;
+
+    /** INI file <p> (0, 0x8a5971c5, -1) */
+    public static final DBPFTGI INI;
+
+    /** NULLTGI <p> (-1, -1, -1) */
+    public static final DBPFTGI NULLTGI;
+
+    static {
         /*
          * Masks need to be ordered "bottom-up", that is, specialized entries
          * need to be inserted first, more general ones later.
          * 
          * @see DBPFTGI#getLabel()
          */
+        BLANKTGI    = new Mask(0, 0, 0, "-");
+        DIRECTORY   = new Mask(0xe86b1eefL, 0xe86b1eefL, 0x286b1f03L, "DIR");
+        LD          = new Mask(0x6be74c60L, 0x6be74c60L, -1L, "LD");
+        EXEMPLAR    = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
+        COHORT      = new Mask(0x05342861L, -1L, -1L, "COHORT");
+        PNG_ICON    = new Mask(0x856ddbacL, 0x6a386d26L, -1L, "PNG (Icon)");
+        PNG         = new Mask(0x856ddbacL, -1L, -1L, "PNG");
+        FSH         = new Mask(0x7ab50e44L, -1L, -1L, "FSH");
+        S3D         = new Mask(0x5ad0e817L, -1L, -1L, "S3D");
+        SC4PATH_2D  = new Mask(0x296678f7L, 0x69668828L, -1L, "SC4PATH (2D)");
+        SC4PATH_3D  = new Mask(0x296678f7L, 0xa966883fL, -1L, "SC4PATH (3D)");
+        SC4PATH     = new Mask(0x296678f7L, -1L, -1L, "SC4PATH");
+        LUA         = new Mask(0xca63e2a3L, 0x4a5e8ef6L, -1L, "LUA");
+        LUA_GEN     = new Mask(0xca63e2a3L, 0x4a5e8f3fL, -1L, "LUA (Generators)");
+        RUL         = new Mask(0x0a5bcf4bL, 0xaa5bcf57L, -1L, "RUL");
+        WAV         = new Mask(0x2026960bL, 0xaa4d1933L, -1L, "WAV");
+        LTEXT       = new Mask(0x2026960bL, -1L, -1L, "LTEXT");
+        EFFDIR      = new Mask(0xea5118b0L, -1L, -1L, "EFFDIR");
+        INI_FONT    = new Mask(0L, 0x4a87bfe8L, 0x2a87bffcL, "INI (Font Table)");
+        INI_NETW    = new Mask(0L, 0x8a5971c5L, 0x8a5993b9L, "INI (Networks)");
+        INI         = new Mask(0L, 0x8a5971c5L, -1L, "INI");
+        NULLTGI     = new Mask(-1, -1, -1, "UNKNOWN"); // any TGI matches this last one
+    }
+
+    private static class Mask extends DBPFTGI {
         
-        /** BLANKTGI (0, 0, 0) */
-        BLANKTGI(DBPFTGI.BLANKTGI, "-"),
+        private static final Queue<Mask> values = new ArrayDeque<Mask>(); // for ordered iteration
 
-        /** Directory file */
-        DIRECTORY(DBPFTGI.DIRECTORY, "DIR"),
-
-        /** LD file */
-        LD(0x6be74c60L, 0x6be74c60L, -1L, "LD"),
-
-        /** Exemplar file: LotInfo, LotConfig */
-        EXEMPLAR(0x6534284aL, -1L, -1L, "EXEMPLAR"),
-
-        /** Cohort file */
-        COHORT(0x05342861L, -1L, -1L, "COHORT"),
-
-        /** PNG file: Menu building icons, bridges, overlays */
-        PNG_ICON(0x856ddbacL, 0x6a386d26L, -1L, "PNG (Icon)"),
-
-        /** PNG file (image, icon) */
-        PNG(0x856ddbacL, -1L, -1L, "PNG"),
-
-        /** FSH file: Textures */
-        FSH(0x7ab50e44L, -1L, -1L, "FSH"),
-
-        /** S3D file: Models */
-        S3D(0x5ad0e817L, -1L, -1L, "S3D"),
-
-        /** SC4PATH (2D) */
-        SC4PATH_2D(0x296678f7L, 0x69668828L, -1L, "SC4PATH (2D)"),
-
-        /** SC4PATH (3D) */
-        SC4PATH_3D(0x296678f7L, 0xa966883fL, -1L, "SC4PATH (3D)"),
-
-        /** SC4PATH file */
-        SC4PATH(0x296678f7L, -1L, -1L, "SC4PATH"),
-
-        /** LUA file: Missions, Advisors, Tutorials and Packaging files */
-        LUA(0xca63e2a3L, 0x4a5e8ef6L, -1L, "LUA"),
-
-        /** LUA file: Generators, Attractors, Repulsors and System LUA */
-        LUA_GEN(0xca63e2a3L, 0x4a5e8f3fL, -1L, "LUA (Generators)"),
-
-        /** RUL file: Network rules */
-        RUL(0x0a5bcf4bL, 0xaa5bcf57L, -1L, "RUL"),
-
-        /** WAV file */
-        WAV(0x2026960bL, 0xaa4d1933L, -1L, "WAV"),
-
-        /** LTEXT or WAV file */
-        LTEXT(0x2026960bL, -1L, -1L, "LTEXT"),
-        
-        /** Effect Directory file */
-        EFFDIR(0xea5118b0L, -1L, -1L, "EFFDIR"),
-        
-        /** Font Table INI */
-        INI_FONT(0L, 0x4a87bfe8L, 0x2a87bffcL, "INI (Font Table)"),
-
-        /** Network INI: Remapping, Bridge Exemplars */
-        INI_NETW(0L, 0x8a5971c5L, 0x8a5993b9L, "INI (Networks)"),
-        
-        /** INI file */
-        INI(0L, 0x8a5971c5L, -1L, "INI"),
-        
-        /** NULLTGI (-1, -1, -1) */
-        NULLTGI(DBPFTGI.NULLTGI, "UNKNOWN"); // any TGI matches this last one
-
-        private final DBPFTGI tgi;
         private final String label;
 
-        private Mask(DBPFTGI tgi, String label) {
-            this.tgi = tgi;
-            this.label = label;
-        }
-        
         private Mask(long type, long group, long instance, String label) {
-            this(new DBPFTGI(type, group, instance), label);
-        }
-        
-        @Override
-        public String toString() {
-            return this.tgi.toString() + " " + this.label;
+            super(type, group, instance);
+            this.label = label;
+            values.add(this);
         }
     }
 }
