@@ -286,35 +286,15 @@ public class DBPFFile {
     }
     
     /**
-     * Returns a count of entries matching the specified TGI mask.
-     * <p>
-     * {@link DBPFTGI.Mask} constants are useful here.
-     *
-     * @param tgiMask The TGI mask to count entries against.
-     *
-     * @return The number of entries that match the DBPFTGI mask passed in.
-     *
-     * @see DBPFTGI#matches(DBPFTGI.Mask)
-     */
-    public int countTGI(DBPFTGI.Mask tgiMask) {
-        int count = 0;
-        for (DirectDBPFEntry entry : this.entryMap.values()) {
-            if (entry.getTGI().matches(tgiMask)) {
-                count++;
-            }
-        }
-        return count;
-    }
-    
-    /**
      * Returns a count of entries matching the specified TGI mask. TGIs may
      * include null (-1) components that will be masked against.
+     * <p>
+     * {@link DBPFTGI} constants are useful here.
      *
      * @param tgiMask The TGI mask to count entries against.
      *
      * @return The number of entries that match the DBPFTGI mask passed in.
      *
-     * @see #countTGI(DBPFTGI.Mask)
      * @see DBPFTGI#matches(DBPFTGI)
      */
     public int countTGI(DBPFTGI tgiMask) {
@@ -1022,7 +1002,7 @@ public class DBPFFile {
                 Queue<WriteListData> indexData = new ArrayDeque<WriteListData>();
                 final ByteBuffer headerBuf = ByteBuffer.allocate(COMPRESSION_HEADER_LENGTH); // for header of compressed files, allocated here only once for efficiency 
                 for (DBPFEntry entry : writeList) {
-                    if (entry.getTGI().matches(DBPFTGI.Mask.DIRECTORY)) {
+                    if (entry.getTGI().matches(DBPFTGI.DIRECTORY)) {
                         continue;
                     }
                     indexOffsetLocation += transferData(entry,
@@ -1385,32 +1365,32 @@ public class DBPFFile {
             }
 
             DBPFType type = null;
-            if (tgi.matches(DBPFTGI.Mask.EXEMPLAR)) {
+            if (tgi.matches(DBPFTGI.EXEMPLAR)) {
                 type = new DBPFExemplar(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.COHORT)) {
+            } else if (tgi.matches(DBPFTGI.COHORT)) {
                 type = new DBPFCohort(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.PNG)) {
+            } else if (tgi.matches(DBPFTGI.PNG)) {
                 type = new DBPFPNG(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.WAV)) {
+            } else if (tgi.matches(DBPFTGI.WAV)) {
                 // TODO not implemented yet, so use DBPFRaw
                 type = null;
-            } else if (tgi.matches(DBPFTGI.Mask.LTEXT)) {
+            } else if (tgi.matches(DBPFTGI.LTEXT)) {
                 type = new DBPFLText(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.DIRECTORY)) {
+            } else if (tgi.matches(DBPFTGI.DIRECTORY)) {
                 type = new DBPFDirectory();
                 ((DBPFDirectory) type).setData(data);
-            } else if (tgi.matches(DBPFTGI.Mask.LUA)) {
+            } else if (tgi.matches(DBPFTGI.LUA)) {
                 type = new DBPFLUA(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.LUA_GEN)) {
+            } else if (tgi.matches(DBPFTGI.LUA_GEN)) {
                 type = new DBPFLUA(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.RUL)) {
+            } else if (tgi.matches(DBPFTGI.RUL)) {
                 type = new DBPFRUL(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.FSH)) {
+            } else if (tgi.matches(DBPFTGI.FSH)) {
                 type = new DBPFFSH(dData, tgi, packager.isCompressed());
                 // TODO check S3D type conversion
-            } else if (tgi.matches(DBPFTGI.Mask.S3D)) {
+            } else if (tgi.matches(DBPFTGI.S3D)) {
                 type = new DBPFS3D(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.Mask.SC4PATH)) {
+            } else if (tgi.matches(DBPFTGI.SC4PATH)) {
                 type = new DBPFSC4Path(dData, tgi, packager.isCompressed());
             }
 
@@ -1427,7 +1407,7 @@ public class DBPFFile {
          * @return The Cohort or {@code null}.
          */
         public DBPFCohort createCohort() {
-            if (tgi.matches(DBPFTGI.Mask.COHORT)) {
+            if (tgi.matches(DBPFTGI.COHORT)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFCohort) {
                     return (DBPFCohort) type;
@@ -1443,7 +1423,7 @@ public class DBPFFile {
          * @return The Directory or {@code null}.
          */
         public DBPFDirectory createDirectory() {
-            if (tgi.matches(DBPFTGI.Mask.DIRECTORY)) {
+            if (tgi.matches(DBPFTGI.DIRECTORY)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFDirectory) {
                     return (DBPFDirectory) type;
@@ -1459,7 +1439,7 @@ public class DBPFFile {
          * @return The Exemplar or {@code null}.
          */
         public DBPFExemplar createExemplar() {
-            if (tgi.matches(DBPFTGI.Mask.EXEMPLAR)) {
+            if (tgi.matches(DBPFTGI.EXEMPLAR)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFExemplar) {
                     return (DBPFExemplar) type;
@@ -1475,7 +1455,7 @@ public class DBPFFile {
          * @return The FSH or {@code null}.
          */
         public DBPFFSH createFSH() {
-            if (tgi.matches(DBPFTGI.Mask.FSH)) {
+            if (tgi.matches(DBPFTGI.FSH)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFFSH) {
                     return (DBPFFSH) type;
@@ -1491,7 +1471,7 @@ public class DBPFFile {
          * @return The LTEXT or {@code null}.
          */
         public DBPFLText createLTEXT() {
-            if (tgi.matches(DBPFTGI.Mask.LTEXT)) {
+            if (tgi.matches(DBPFTGI.LTEXT)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFLText) {
                     return (DBPFLText) type;
@@ -1507,8 +1487,8 @@ public class DBPFFile {
          * @return The LUA or {@code null}.
          */
         public DBPFLUA createLUA() {
-            if (tgi.matches(DBPFTGI.Mask.LUA) ||
-                    tgi.matches(DBPFTGI.Mask.LUA_GEN)) {
+            if (tgi.matches(DBPFTGI.LUA) ||
+                    tgi.matches(DBPFTGI.LUA_GEN)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFLUA) {
                     return (DBPFLUA) type;
@@ -1524,7 +1504,7 @@ public class DBPFFile {
          * @return The PNG or {@code null}.
          */
         public DBPFPNG createPNG() {
-            if (tgi.matches(DBPFTGI.Mask.PNG)) {
+            if (tgi.matches(DBPFTGI.PNG)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFPNG) {
                     return (DBPFPNG) type;
@@ -1540,7 +1520,7 @@ public class DBPFFile {
          * @return The RUL or {@code null}.
          */
         public DBPFRUL createRUL() {
-            if (tgi.matches(DBPFTGI.Mask.RUL)) {
+            if (tgi.matches(DBPFTGI.RUL)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFRUL) {
                     return (DBPFRUL) type;
@@ -1556,7 +1536,7 @@ public class DBPFFile {
          * @return The S3D or {@code null}.
          */
         public DBPFS3D createS3D() {
-            if (tgi.matches(DBPFTGI.Mask.S3D)) {
+            if (tgi.matches(DBPFTGI.S3D)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFS3D) {
                     return (DBPFS3D) type;
@@ -1572,7 +1552,7 @@ public class DBPFFile {
          * @return The SC4Path or {@code null}.
          */
         public DBPFSC4Path createSC4Path() {
-            if (tgi.matches(DBPFTGI.Mask.SC4PATH)) {
+            if (tgi.matches(DBPFTGI.SC4PATH)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFSC4Path) {
                     return (DBPFSC4Path) type;

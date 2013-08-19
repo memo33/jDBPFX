@@ -173,18 +173,41 @@ public abstract class DBPFType extends DBPFEntry {
         WAV;
         
         /**
-         * Returns the corresponding general TGI Mask of this Type.
+         * Returns the corresponding general TGI mask of this Type.
          * 
-         * @return the TGI Mask (in case of a RAW type, this will return the
-         *      {@code DBPFTGI.Mask.NULLTGI} which will match for any TGI).
+         * @return the TGI mask (in case of a RAW type, this will return the
+         *      {@code DBPFTGI.NULLTGI} which will match for any TGI).
          */
-        public DBPFTGI.Mask getTGIMask() {
-            // Important: Relies on the fact that the same names were given in
-            // this Enum and the Enum DBPFTGI.Mask.
-            if (this == Type.RAW) {
-                return DBPFTGI.Mask.NULLTGI;
-            } else {
-                return DBPFTGI.Mask.valueOf(this.name());
+        public DBPFTGI getTGIMask() {
+            // list all types here
+            if (this == Type.DIRECTORY) {
+                return DBPFTGI.DIRECTORY;
+            } else if (this == Type.LD) {
+                return DBPFTGI.LD;
+            } else if (this == Type.EXEMPLAR) {
+                return DBPFTGI.EXEMPLAR;
+            } else if (this == Type.COHORT) {
+                return DBPFTGI.COHORT;
+            } else if (this == Type.PNG) {
+                return DBPFTGI.PNG;
+            } else if (this == Type.PNG_ICON) {
+                return DBPFTGI.PNG_ICON;
+            } else if (this == Type.FSH) {
+                return DBPFTGI.FSH;
+            } else if (this == Type.S3D) {
+                return DBPFTGI.S3D;
+            } else if (this == Type.SC4PATH) {
+                return DBPFTGI.SC4PATH;
+            } else if (this == Type.LUA) {
+                return DBPFTGI.LUA;
+            } else if (this == Type.RUL) {
+                return DBPFTGI.RUL;
+            } else if (this == Type.LTEXT) {
+                return DBPFTGI.LTEXT;
+            } else if (this == Type.WAV) {
+                return DBPFTGI.WAV;
+            } else { // if RAW
+                return DBPFTGI.NULLTGI;
             }
         }
     }

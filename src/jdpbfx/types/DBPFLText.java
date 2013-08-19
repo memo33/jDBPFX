@@ -70,7 +70,7 @@ public class DBPFLText extends DBPFType {
 
     @Override
     public boolean setTGI(DBPFTGI tgi) {
-        if(tgi != null && tgi.matches(DBPFTGI.Mask.WAV)) {
+        if(tgi != null && tgi.matches(DBPFTGI.WAV)) {
             return false;
         } else {
             return super.setTGI(tgi);
