@@ -1387,8 +1387,8 @@ public class DBPFFile {
                 type = new DBPFRUL(dData, tgi, packager.isCompressed());
             } else if (tgi.matches(DBPFTGI.FSH)) {
                 type = new DBPFFSH(dData, tgi, packager.isCompressed());
-                // TODO check S3D type conversion
             } else if (tgi.matches(DBPFTGI.S3D)) {
+                // TODO check S3D type conversion
                 type = new DBPFS3D(dData, tgi, packager.isCompressed());
             } else if (tgi.matches(DBPFTGI.SC4PATH)) {
                 type = new DBPFSC4Path(dData, tgi, packager.isCompressed());
@@ -1609,19 +1609,6 @@ public class DBPFFile {
             } catch (IOException e) {
                 DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Converter] IOException for file: " + getFile(), e);
                 return null;
-            }
-        }
-        
-        /**
-         * @return {@code tgi != null}.
-         */
-        @Override
-        public boolean setTGI(DBPFTGI tgi) {
-            if (tgi == null) {
-                return false;
-            } else {
-                this.tgi = tgi;
-                return true;
             }
         }
         

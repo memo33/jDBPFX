@@ -132,6 +132,11 @@ public class DBPFFSH extends DBPFType {
         return DBPFType.Type.FSH;
     }
 
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.FSH;
+    }
+
     private void readImageData(ImageIndex entry, byte[] data) {
         int dataEnd = 0;
         int offset = (int)entry.offset + 0x10;

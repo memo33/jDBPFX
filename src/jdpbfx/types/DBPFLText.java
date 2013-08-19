@@ -121,4 +121,9 @@ public class DBPFLText extends DBPFType {
     public Type getType() {
         return DBPFType.Type.LTEXT;
     }
+
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.LTEXT;
+    }
 }

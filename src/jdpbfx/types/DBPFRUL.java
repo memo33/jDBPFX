@@ -96,4 +96,9 @@ public class DBPFRUL extends DBPFType {
     public Type getType() {
         return DBPFType.Type.RUL;
     }
+
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.RUL;
+    }
 }

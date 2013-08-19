@@ -96,4 +96,9 @@ public class DBPFLUA extends DBPFType {
     public Type getType() {
         return DBPFType.Type.LUA;
     }
+    
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.LUA;
+    }
 }

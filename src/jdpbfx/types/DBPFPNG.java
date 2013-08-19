@@ -40,4 +40,9 @@ public class DBPFPNG extends DBPFType {
     public Type getType() {
         return DBPFType.Type.PNG;
     }
+
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.PNG;
+    }
 }

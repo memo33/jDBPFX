@@ -213,6 +213,11 @@ public class DBPFExemplar extends DBPFType {
         return DBPFType.Type.EXEMPLAR;
     }
 
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.EXEMPLAR;
+    }
+
     /**
      * @return the cohortT
      */

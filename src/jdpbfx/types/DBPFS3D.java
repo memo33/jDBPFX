@@ -348,7 +348,12 @@ public class DBPFS3D extends DBPFType {
     public Type getType() {
         return DBPFType.Type.S3D;
     }
-    
+
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.S3D;
+    }
+
     public List<Vert> getPolys(long frame, long group) {
         if(!decoded)
             return null;

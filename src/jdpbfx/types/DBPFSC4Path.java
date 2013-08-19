@@ -85,4 +85,9 @@ public class DBPFSC4Path extends DBPFType {
     public Type getType() {
         return DBPFType.Type.SC4PATH;
     }
+
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.SC4PATH;
+    }
 }

@@ -63,6 +63,11 @@ public class DBPFDirectory extends DBPFType {
     public Type getType() {
         return DBPFType.Type.DIRECTORY;
     }
+    
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.DIRECTORY;
+    }
 
     @Override
     public void setCompressed(boolean compressed) {

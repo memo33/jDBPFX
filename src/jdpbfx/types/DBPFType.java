@@ -103,6 +103,13 @@ public abstract class DBPFType extends DBPFEntry {
      * @return the Type.
      */
     public abstract Type getType();
+    
+    /**
+     * Returns the corresponding generic TGI mask constant matching this Type.
+     * 
+     * @return the TGI mask.
+     */
+    public abstract DBPFTGI getTGIMask();
 
     /**
      * Returns the raw byte data of this type.
@@ -118,7 +125,7 @@ public abstract class DBPFType extends DBPFEntry {
      */
     @Override
     public boolean setTGI(DBPFTGI tgi) {
-        if (tgi != null && tgi.matches(this.getType().getTGIMask())) {
+        if (tgi != null && tgi.matches(this.getTGIMask())) {
             this.tgi = tgi;
             return true;
         }
@@ -163,7 +170,6 @@ public abstract class DBPFType extends DBPFEntry {
         EXEMPLAR,
         COHORT,
         PNG,
-        PNG_ICON,
         FSH,
         S3D,
         SC4PATH,
@@ -171,44 +177,5 @@ public abstract class DBPFType extends DBPFEntry {
         RUL,
         LTEXT,
         WAV;
-        
-        /**
-         * Returns the corresponding general TGI mask of this Type.
-         * 
-         * @return the TGI mask (in case of a RAW type, this will return the
-         *      {@code DBPFTGI.NULLTGI} which will match for any TGI).
-         */
-        public DBPFTGI getTGIMask() {
-            // list all types here
-            if (this == Type.DIRECTORY) {
-                return DBPFTGI.DIRECTORY;
-            } else if (this == Type.LD) {
-                return DBPFTGI.LD;
-            } else if (this == Type.EXEMPLAR) {
-                return DBPFTGI.EXEMPLAR;
-            } else if (this == Type.COHORT) {
-                return DBPFTGI.COHORT;
-            } else if (this == Type.PNG) {
-                return DBPFTGI.PNG;
-            } else if (this == Type.PNG_ICON) {
-                return DBPFTGI.PNG_ICON;
-            } else if (this == Type.FSH) {
-                return DBPFTGI.FSH;
-            } else if (this == Type.S3D) {
-                return DBPFTGI.S3D;
-            } else if (this == Type.SC4PATH) {
-                return DBPFTGI.SC4PATH;
-            } else if (this == Type.LUA) {
-                return DBPFTGI.LUA;
-            } else if (this == Type.RUL) {
-                return DBPFTGI.RUL;
-            } else if (this == Type.LTEXT) {
-                return DBPFTGI.LTEXT;
-            } else if (this == Type.WAV) {
-                return DBPFTGI.WAV;
-            } else { // if RAW
-                return DBPFTGI.NULLTGI;
-            }
-        }
     }
 }

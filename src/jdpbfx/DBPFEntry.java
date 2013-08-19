@@ -10,7 +10,7 @@ import jdpbfx.types.DBPFType;
  * of a subfile that may be contained in a DBPF file. The {@link DBPFFile.Writer}
  * takes these entries to write to a new DBPF file.
  * <p>
- * There are two fundamentally different implementing Subclasses:
+ * There are three fundamentally different implementing Subclasses:
  * <dl>
  * <dt><b>{@link DirectDBPFEntry}</b>
  * <dd>
@@ -45,6 +45,13 @@ import jdpbfx.types.DBPFType;
  * {@link DirectDBPFEntry#createType() createType} methods of a {@code
  * DirectDBPFEntry}, whenever working with the actual type of the entry is
  * desired.
+ * <dt><b>Custom Subclasses</b>
+ * <dd>
+ * The only method that needs to be implemented is the {@link #createDataChannel} method,
+ * hence, the Writer will be able to write the entry to a file. This can be easily done
+ * by an anonymous inner type. This approach will be used less frequently, but it is
+ * especially suitable for large raw data entries. It would be impractical to convert
+ * these to byte arrays, in between.
  * </dl>
  * 
  * @author memo
@@ -79,23 +86,39 @@ public abstract class DBPFEntry {
     }
     
     /**
-     * Sets the TGI of this entry to the specified TGI.
+     * Sets the TGI of this entry to the specified TGI. The {@code tgi} must
+     * not be {@code null}.
      * 
      * @param tgi the new TGI.
      * @return TRUE if the TGI was successfully set,
-     *         FALSE otherwise (as specified by the implementing subclasses).
+     *         FALSE if {@code tgi} was {@code null} or otherwise (as specified
+     *         by the implementing subclasses).
      */
-    public abstract boolean setTGI(DBPFTGI tgi);
+    public boolean setTGI(DBPFTGI tgi) {
+        if (tgi == null) {
+            return false;
+        } else {
+            this.tgi = tgi;
+            return true;
+        }
+    }
 
     /**
      * Creates an array with the data from this entry.
+     * 
+     * Optional operation. The default implementation of this method throws an
+     * {@link UnsupportedOperationException}, but both {@link DBPFFile.DirectDBPFEntry}
+     * and subclasses of {@link DBPFType} implement it. It is optional in order to
+     * simplify custom implementations of {@code DBPFEntry}.
      * 
      * @return the data array,
      *      or {@code null} in case an IO issue occured.
      *      
      * @see #createDataChannel()
      */
-    public abstract byte[] createData();
+    public byte[] createData() {
+        throw new UnsupportedOperationException();
+    }
     
     /**
      * Creates a {@link ReadableByteChannel} that can be used to read the data

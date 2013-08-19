@@ -194,6 +194,11 @@ public class DBPFCohort extends DBPFType {
     public Type getType() {
         return DBPFType.Type.COHORT;
     }
+    
+    @Override
+    public DBPFTGI getTGIMask() {
+        return DBPFTGI.COHORT;
+    }
 
     /**
      * @return the cohortT
