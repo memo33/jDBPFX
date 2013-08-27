@@ -6,8 +6,10 @@ mainly meant to support the DBPF file types used by SimCity 4.
 
 Installation
 ------------
-Download the source files to a local directory and run Apache Ant to compile
-the sources, using the included build.xml file.
+Get a binary version here: https://www.dropbox.com/sh/b8a2x16j1vmnlc5/12iDPmtoDC.
+Alternatively, download the source files to a local directory and run Apache Ant
+to compile the sources, using the included build.xml file, in order to get the
+latest version.
 
 Contributions
 -------------
