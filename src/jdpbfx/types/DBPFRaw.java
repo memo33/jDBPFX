@@ -66,7 +66,7 @@ public class DBPFRaw extends DBPFType {
     }
 
     /**
-     * @return the {@link DBPFTGI.NULLTGI} which will match for any TGI.
+     * @return the {@link DBPFTGI#NULLTGI} which will match for any TGI.
      */
     @Override
     public DBPFTGI getTGIMask() {

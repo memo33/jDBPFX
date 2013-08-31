@@ -1143,7 +1143,7 @@ public class DBPFFile {
                 src = entry.createDataChannel();
                 if (src == null) {
                     DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.DBPFEntry] " +
-                            "Cannot read data of TGI: " + entry.tgi);
+                            "Cannot read data of TGI: " + entry.getTGI());
                     return 0;
                 } // else
     
@@ -1296,7 +1296,7 @@ public class DBPFFile {
          */
         @Override
         public String toString() {
-            return this.tgi.toString() + " " + this.tgi.getLabel();
+            return this.getTGI().toString() + " " + this.getTGI().getLabel();
         }
         
         /**
@@ -1407,7 +1407,7 @@ public class DBPFFile {
          * @return The Cohort or {@code null}.
          */
         public DBPFCohort createCohort() {
-            if (tgi.matches(DBPFTGI.COHORT)) {
+            if (this.getTGI().matches(DBPFTGI.COHORT)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFCohort) {
                     return (DBPFCohort) type;
@@ -1423,7 +1423,7 @@ public class DBPFFile {
          * @return The Directory or {@code null}.
          */
         public DBPFDirectory createDirectory() {
-            if (tgi.matches(DBPFTGI.DIRECTORY)) {
+            if (this.getTGI().matches(DBPFTGI.DIRECTORY)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFDirectory) {
                     return (DBPFDirectory) type;
@@ -1439,7 +1439,7 @@ public class DBPFFile {
          * @return The Exemplar or {@code null}.
          */
         public DBPFExemplar createExemplar() {
-            if (tgi.matches(DBPFTGI.EXEMPLAR)) {
+            if (this.getTGI().matches(DBPFTGI.EXEMPLAR)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFExemplar) {
                     return (DBPFExemplar) type;
@@ -1455,7 +1455,7 @@ public class DBPFFile {
          * @return The FSH or {@code null}.
          */
         public DBPFFSH createFSH() {
-            if (tgi.matches(DBPFTGI.FSH)) {
+            if (this.getTGI().matches(DBPFTGI.FSH)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFFSH) {
                     return (DBPFFSH) type;
@@ -1471,7 +1471,7 @@ public class DBPFFile {
          * @return The LTEXT or {@code null}.
          */
         public DBPFLText createLTEXT() {
-            if (tgi.matches(DBPFTGI.LTEXT)) {
+            if (this.getTGI().matches(DBPFTGI.LTEXT)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFLText) {
                     return (DBPFLText) type;
@@ -1487,8 +1487,8 @@ public class DBPFFile {
          * @return The LUA or {@code null}.
          */
         public DBPFLUA createLUA() {
-            if (tgi.matches(DBPFTGI.LUA) ||
-                    tgi.matches(DBPFTGI.LUA_GEN)) {
+            if (this.getTGI().matches(DBPFTGI.LUA) ||
+                    this.getTGI().matches(DBPFTGI.LUA_GEN)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFLUA) {
                     return (DBPFLUA) type;
@@ -1504,7 +1504,7 @@ public class DBPFFile {
          * @return The PNG or {@code null}.
          */
         public DBPFPNG createPNG() {
-            if (tgi.matches(DBPFTGI.PNG)) {
+            if (this.getTGI().matches(DBPFTGI.PNG)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFPNG) {
                     return (DBPFPNG) type;
@@ -1520,7 +1520,7 @@ public class DBPFFile {
          * @return The RUL or {@code null}.
          */
         public DBPFRUL createRUL() {
-            if (tgi.matches(DBPFTGI.RUL)) {
+            if (this.getTGI().matches(DBPFTGI.RUL)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFRUL) {
                     return (DBPFRUL) type;
@@ -1536,7 +1536,7 @@ public class DBPFFile {
          * @return The S3D or {@code null}.
          */
         public DBPFS3D createS3D() {
-            if (tgi.matches(DBPFTGI.S3D)) {
+            if (this.getTGI().matches(DBPFTGI.S3D)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFS3D) {
                     return (DBPFS3D) type;
@@ -1552,7 +1552,7 @@ public class DBPFFile {
          * @return The SC4Path or {@code null}.
          */
         public DBPFSC4Path createSC4Path() {
-            if (tgi.matches(DBPFTGI.SC4PATH)) {
+            if (this.getTGI().matches(DBPFTGI.SC4PATH)) {
                 DBPFType type = createType();
                 if (type instanceof DBPFSC4Path) {
                     return (DBPFSC4Path) type;

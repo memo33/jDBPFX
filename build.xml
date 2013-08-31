@@ -5,6 +5,7 @@
     <property name="MyApp" value="${ant.project.name}-${project.version}" />
     <property name="src.dir" value="${basedir}/src" />
     <property name="bin.dir" value="${basedir}/bin" />
+    <property name="lib.dir" value="${basedir}/lib" />
     <property name="doc.dir" value="${basedir}/doc" />
     <property name="dist.dir" value="${basedir}/dist" />
 

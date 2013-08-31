@@ -235,9 +235,30 @@ public class DBPFTGI {
     /** PNG file (image, icon) <p> (0x856ddbac, -1, -1) */
     public static final DBPFTGI PNG;
 
+    /** FSH file: Transit Textures/Buildings/Bridges/Misc <p> (0x7ab50e44, 0x1abe787d, -1) */
+    public static final DBPFTGI FSH_TRANSIT;
+
+    /** FSH file: Base and Overlay Lot Textures <p> (0x7ab50e44, 0x0986135e, -1) */
+    public static final DBPFTGI FSH_BASE_OVERLAY;
+
+    /** FSH file: Transit Network Shadows (Masks) <p> (0x7ab50e44, 0x2BC2759a, -1) */
+    public static final DBPFTGI FSH_SHADOW;
+
+    /** FSH file: Animation Sprites (Props) <p> (0x7ab50e44, 0x2a2458f9, -1) */
+    public static final DBPFTGI FSH_ANIM_PROPS;
+
+    /** FSH file: Animation Sprites (Non Props) <p> (0x7ab50e44, 0x49a593e7, -1) */
+    public static final DBPFTGI FSH_ANIM_NONPROPS;
+
+    /** FSH file: Terrain And Foundations <p> (0x7ab50e44, 0x891b0e1a, -1) */
+    public static final DBPFTGI FSH_TERRAIN_FOUNDATION;
+
+    /** FSH file: User Interface Images <p> (0x7ab50e44, 0x46a006b0, -1) */
+    public static final DBPFTGI FSH_UI;
+
     /** FSH file: Textures <p> (0x7ab50e44, -1, -1) */
     public static final DBPFTGI FSH;
-
+    
     /** S3D file: Models <p> (0x5ad0e817, -1, -1) */
     public static final DBPFTGI S3D;
 
@@ -272,7 +293,7 @@ public class DBPFTGI {
     public static final DBPFTGI INI_FONT;
 
     /** Network INI: Remapping, Bridge Exemplars <p> (0, 0x8a5971c5, 0x8a5993b9) */
-    public static final DBPFTGI INI_NETW;
+    public static final DBPFTGI INI_NETWORK;
 
     /** INI file <p> (0, 0x8a5971c5, -1) */
     public static final DBPFTGI INI;
@@ -287,28 +308,39 @@ public class DBPFTGI {
          * 
          * @see DBPFTGI#getLabel()
          */
-        BLANKTGI    = new Mask(0L, 0L, 0L, "-");
-        DIRECTORY   = new Mask(0xe86b1eefL, 0xe86b1eefL, 0x286b1f03L, "DIR");
-        LD          = new Mask(0x6be74c60L, 0x6be74c60L, -1L, "LD");
-        EXEMPLAR    = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
-        COHORT      = new Mask(0x05342861L, -1L, -1L, "COHORT");
-        PNG_ICON    = new Mask(0x856ddbacL, 0x6a386d26L, -1L, "PNG (Icon)");
-        PNG         = new Mask(0x856ddbacL, -1L, -1L, "PNG");
-        FSH         = new Mask(0x7ab50e44L, -1L, -1L, "FSH");
-        S3D         = new Mask(0x5ad0e817L, -1L, -1L, "S3D");
-        SC4PATH_2D  = new Mask(0x296678f7L, 0x69668828L, -1L, "SC4PATH (2D)");
-        SC4PATH_3D  = new Mask(0x296678f7L, 0xa966883fL, -1L, "SC4PATH (3D)");
-        SC4PATH     = new Mask(0x296678f7L, -1L, -1L, "SC4PATH");
-        LUA         = new Mask(0xca63e2a3L, 0x4a5e8ef6L, -1L, "LUA");
-        LUA_GEN     = new Mask(0xca63e2a3L, 0x4a5e8f3fL, -1L, "LUA (Generators)");
-        RUL         = new Mask(0x0a5bcf4bL, 0xaa5bcf57L, -1L, "RUL");
-        WAV         = new Mask(0x2026960bL, 0xaa4d1933L, -1L, "WAV");
-        LTEXT       = new Mask(0x2026960bL, -1L, -1L, "LTEXT");
-        EFFDIR      = new Mask(0xea5118b0L, -1L, -1L, "EFFDIR");
-        INI_FONT    = new Mask(0L, 0x4a87bfe8L, 0x2a87bffcL, "INI (Font Table)");
-        INI_NETW    = new Mask(0L, 0x8a5971c5L, 0x8a5993b9L, "INI (Networks)");
-        INI         = new Mask(0L, 0x8a5971c5L, -1L, "INI");
-        NULLTGI     = new Mask(-1L, -1L, -1L, "UNKNOWN"); // any TGI matches this last one
+        BLANKTGI                = new Mask(0L, 0L, 0L, "-");
+        DIRECTORY               = new Mask(0xe86b1eefL, 0xe86b1eefL, 0x286b1f03L, "DIR");
+        LD                      = new Mask(0x6be74c60L, 0x6be74c60L, -1L, "LD");
+        EXEMPLAR                = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
+        COHORT                  = new Mask(0x05342861L, -1L, -1L, "COHORT");
+        S3D                     = new Mask(0x5ad0e817L, -1L, -1L, "S3D");
+        
+        FSH_TRANSIT             = new Mask(0x7ab50e44L, 0x1abe787dL, -1L, "FSH (Transit Texture)");
+        FSH_BASE_OVERLAY        = new Mask(0x7ab50e44L, 0x0986135eL, -1L, "FSH (Base/Overlay Texture)");
+        FSH_SHADOW              = new Mask(0x7ab50e44L, 0x2BC2759aL, -1L, "FSH (Shadow Mask)");
+        FSH_ANIM_PROPS          = new Mask(0x7ab50e44L, 0x2a2458f9L, -1L, "FSH (Animation Sprites (Props))");
+        FSH_ANIM_NONPROPS       = new Mask(0x7ab50e44L, 0x49a593e7L, -1L, "FSH (Animation Sprites (Non Props))");
+        FSH_TERRAIN_FOUNDATION  = new Mask(0x7ab50e44L, 0x891b0e1aL, -1L, "FSH (Terrain/Foundation)");
+        FSH_UI                  = new Mask(0x7ab50e44L, 0x46a006b0L, -1L, "FSH (UI Image)");
+        FSH                     = new Mask(0x7ab50e44L, -1L, -1L, "FSH");
+        
+        SC4PATH_2D              = new Mask(0x296678f7L, 0x69668828L, -1L, "SC4PATH (2D)");
+        SC4PATH_3D              = new Mask(0x296678f7L, 0xa966883fL, -1L, "SC4PATH (3D)");
+        SC4PATH                 = new Mask(0x296678f7L, -1L, -1L, "SC4PATH");
+        
+        PNG_ICON                = new Mask(0x856ddbacL, 0x6a386d26L, -1L, "PNG (Icon)");
+        PNG                     = new Mask(0x856ddbacL, -1L, -1L, "PNG");
+        LUA                     = new Mask(0xca63e2a3L, 0x4a5e8ef6L, -1L, "LUA");
+        LUA_GEN                 = new Mask(0xca63e2a3L, 0x4a5e8f3fL, -1L, "LUA (Generators)");
+        WAV                     = new Mask(0x2026960bL, 0xaa4d1933L, -1L, "WAV");
+        LTEXT                   = new Mask(0x2026960bL, -1L, -1L, "LTEXT");
+        INI_FONT                = new Mask(0L, 0x4a87bfe8L, 0x2a87bffcL, "INI (Font Table)");
+        INI_NETWORK             = new Mask(0L, 0x8a5971c5L, 0x8a5993b9L, "INI (Networks)");
+        INI                     = new Mask(0L, 0x8a5971c5L, -1L, "INI");
+        
+        RUL                     = new Mask(0x0a5bcf4bL, 0xaa5bcf57L, -1L, "RUL");
+        EFFDIR                  = new Mask(0xea5118b0L, -1L, -1L, "EFFDIR");
+        NULLTGI                 = new Mask(-1L, -1L, -1L, "UNKNOWN"); // any TGI matches this last one
     }
 
     private static class Mask extends DBPFTGI {

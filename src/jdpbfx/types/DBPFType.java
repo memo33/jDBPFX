@@ -78,11 +78,11 @@ public abstract class DBPFType extends DBPFEntry {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("TGI: ");
-        sb.append(DBPFUtil.toHex(tgi.getType(), 8));
+        sb.append(DBPFUtil.toHex(this.getTGI().getType(), 8));
         sb.append(", ");
-        sb.append(DBPFUtil.toHex(tgi.getGroup(), 8));
+        sb.append(DBPFUtil.toHex(this.getTGI().getGroup(), 8));
         sb.append(", ");
-        sb.append(DBPFUtil.toHex(tgi.getInstance(), 8));
+        sb.append(DBPFUtil.toHex(this.getTGI().getInstance(), 8));
         sb.append(", Compressed: ");
         sb.append(compressed);
         return sb.toString();
@@ -126,8 +126,7 @@ public abstract class DBPFType extends DBPFEntry {
     @Override
     public boolean setTGI(DBPFTGI tgi) {
         if (tgi != null && tgi.matches(this.getTGIMask())) {
-            this.tgi = tgi;
-            return true;
+            return super.setTGI(tgi);
         }
         return false;
     }

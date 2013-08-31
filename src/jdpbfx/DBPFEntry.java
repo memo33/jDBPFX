@@ -45,6 +45,7 @@ import jdpbfx.types.DBPFType;
  * {@link DirectDBPFEntry#createType() createType} methods of a {@code
  * DirectDBPFEntry}, whenever working with the actual type of the entry is
  * desired.
+ * 
  * <dt><b>Custom Subclasses</b>
  * <dd>
  * The only method that needs to be implemented is the {@link #createDataChannel} method,
@@ -65,15 +66,16 @@ public abstract class DBPFEntry {
     /**
      * The TGI of this entry.
      */
-    protected DBPFTGI tgi;
+    private DBPFTGI tgi;
     
     /**
-     * Constructor. 
+     * Constructor. If the passed TGI is {@code null}, the TGI will be set to
+     * {@link DBPFTGI#NULLTGI}.
      * 
      * @param tgi the TGI of this entry.
      */
     protected DBPFEntry(DBPFTGI tgi) {
-        this.tgi = tgi;
+        this.tgi = tgi != null ? tgi : DBPFTGI.NULLTGI;
     }
     
     /**
