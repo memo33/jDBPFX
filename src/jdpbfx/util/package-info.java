@@ -1,4 +1,5 @@
 /**
- * The util package contains a static utility class and the QFS compression class.
+ * The util package contains a static utility class, the QFS compression class
+ * and a file comparator.
  */
 package jdpbfx.util;
