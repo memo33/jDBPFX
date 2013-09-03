@@ -655,7 +655,7 @@ public class DBPFFile {
                     throw new IOException("Could not create temp dir: " + TMP_DIR);
                 }
             }
-            TMP_DIR.deleteOnExit(); // will only work if dir is empty
+            TMP_DIR.deleteOnExit(); // TODO will only work if dir is empty?
         }
         
         /**
@@ -813,8 +813,10 @@ public class DBPFFile {
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          */
-        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException {
+        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException, FileNotFoundException, IOException {
             return update(dbpfFile, writeList, dbpfFile.getFile(), true);
         }
 
@@ -840,8 +842,10 @@ public class DBPFFile {
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          */
-        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws UnsupportedOperationException {
+        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws UnsupportedOperationException, FileNotFoundException, IOException {
             return update(dbpfFile, writeList, newFile, false);
         }
         
@@ -870,8 +874,10 @@ public class DBPFFile {
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          */
-        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile, boolean preserveDateCreated) throws UnsupportedOperationException {
+        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile, boolean preserveDateCreated) throws UnsupportedOperationException, FileNotFoundException, IOException {
             // create map view of writeList for fast look-up
             int writeListSize = writeList.size();
             Map<DBPFTGI, DBPFEntry> updatedEntries =
@@ -910,8 +916,10 @@ public class DBPFFile {
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          */
-        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException {
+        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException, FileNotFoundException, IOException {
             return write(dbpfFile.getFile(), writeList, dbpfFile.header.getDateCreated());
         }
 
@@ -936,8 +944,10 @@ public class DBPFFile {
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          */
-        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws UnsupportedOperationException {
+        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws UnsupportedOperationException, FileNotFoundException, IOException {
             return write(newFile, writeList, dbpfFile.header.getDateCreated());
         }
 
@@ -957,8 +967,10 @@ public class DBPFFile {
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          */
-        public static boolean write(File file, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException {
+        public static boolean write(File file, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException, FileNotFoundException, IOException {
             return write(file, writeList, System.currentTimeMillis() / 1000);
         }
 
@@ -979,7 +991,8 @@ public class DBPFFile {
             }
         }
         
-        private static boolean write(File file, Collection<? extends DBPFEntry> writeList, long dateCreated) throws UnsupportedOperationException {
+        private static boolean write(File file, Collection<? extends DBPFEntry> writeList, long dateCreated)
+                throws UnsupportedOperationException, FileNotFoundException, IOException {
             // make sure not to overwrite a file we want to read from
             testForOverwritingCollision(file, writeList);
 
@@ -1020,14 +1033,14 @@ public class DBPFFile {
                 // Update index entry count, location and size
                 updateHeader(fc, buf, indexOffsetLocation, indexData.size());
                 fc.force(false);
-            } catch (FileNotFoundException e) {
-                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] File not found: " + file, e);
-                return false;
-            } catch (IOException e) {
-                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] IOException for file: " + file, e);
-                return false;
+//            } catch (FileNotFoundException e) {
+//                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] File not found: " + file, e);
+//                return false;
+//            } catch (IOException e) {
+//                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] IOException for file: " + file, e);
+//                return false;
             } finally {
-                if (Reader.exceptionalClose("Writer", file, fc, raf)){
+                if (Reader.exceptionalClose("Writer", file, fc, raf)) {
                     return false;
                 }
             }

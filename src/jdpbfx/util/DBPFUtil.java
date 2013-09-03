@@ -19,7 +19,7 @@ public class DBPFUtil {
     /**
      * The logger name for logging events
      */
-    public static final String LOGGER_NAME = "JDBPF";
+    public static final String LOGGER_NAME = "JDBPFX";
 
     /**
      * The logger object logging events
