@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.RandomAccessFile;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -530,15 +531,17 @@ public class DBPFFile {
          *
          * @param filename
          *            The file of the DBPF file to read.
-         * @return The DBPF file object or NULL, if file not found or other type of error occured.
+         * @return The DBPF file object.
+         * 
+         * @throws DBPFFileFormatException if {@link #checkFileType} returns {@code false}.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          * 
          * @see #readMapped(File)
          * @see #readCached(File)
          * @see DBPFFile
          */
-        public static DBPFFile read(File filename) {
-            // to store the entries of the file
-            DBPFFile dbpfFile = null;
+        public static DBPFFile read(File filename) throws DBPFFileFormatException, FileNotFoundException, IOException {
             
             RandomAccessFile raf = null;
             try {
@@ -560,7 +563,7 @@ public class DBPFFile {
                     long indexOffsetLocation = buf.getInt() & 0xffffffffL; //readUint32(raf, 4);
                     long indexSize = buf.getInt() & 0xffffffffL; //readUint32(raf, 4);
 
-                    dbpfFile = new DBPFFile(filename, majorVersion, minorVersion,
+                    DBPFFile dbpfFile = new DBPFFile(filename, majorVersion, minorVersion,
                                             dateCreated, dateModified, indexType,
                                             indexEntryCount, indexOffsetLocation, indexSize);
 
@@ -581,19 +584,19 @@ public class DBPFFile {
 
                         // System.out.println(entry.toString());
                     }
+                    return dbpfFile;
+                } else {
+                    throw new DBPFFileFormatException("Not a DBPF formatted file: " + filename);
                 }
-            } catch (FileNotFoundException e) {
-                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] File not found: " + filename, e);
-                dbpfFile = null;
-            } catch (IOException e) {
-                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] IOException for file: " + filename, e);
-                dbpfFile = null;
+//            } catch (FileNotFoundException e) {
+//                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] File not found: " + filename, e);
+//                dbpfFile = null;
+//            } catch (IOException e) {
+//                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] IOException for file: " + filename, e);
+//                dbpfFile = null;
             } finally {
-                if (exceptionalClose("Reader", filename, raf)) {
-                    dbpfFile = null;
-                }
+                closeAll(raf);
             }
-            return dbpfFile;
         }
         
         /**
@@ -612,41 +615,41 @@ public class DBPFFile {
          * 
          * @param filename
          *            The file of the DBPF file to read.
-         * @return The DBPF file object or NULL, if file not found or other type of error occured.
+         * @return The DBPF file object.
+         * 
+         * @throws DBPFFileFormatException if {@link #checkFileType} returns {@code false}.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
          * 
          * @see #read(File)
          * @see #readCached(File)
          * @see DBPFFile
          * @see FileChannel#map(FileChannel.MapMode, long, long)
          */
-        public static DBPFFile readMapped(File filename) {
+        public static DBPFFile readMapped(File filename) throws DBPFFileFormatException, FileNotFoundException, IOException {
             return readMapped(filename, filename);
         }
 
-        private static DBPFFile readMapped(File filename, File mapFile) {
+        private static DBPFFile readMapped(File filename, File mapFile) throws DBPFFileFormatException, FileNotFoundException, IOException {
             DBPFFile dbpfFile = read(filename);
             
-            if (dbpfFile != null) {
-                FileInputStream fis = null;
-                FileChannel fc = null;
-                try {
-                    fis = new FileInputStream(mapFile);
-                    fc = fis.getChannel();
-                    MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-                    dbpfFile.mappedByteBuffer = mbb;
-                } catch (FileNotFoundException e) {
-                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] File not found: " + mapFile, e);
-                    dbpfFile = null;
-                } catch (IOException e) {
-                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] IOException for file: " + mapFile, e);
-                    dbpfFile = null;
-                } finally {
-                    if (exceptionalClose("Reader", mapFile, fc, fis)) {
-                        dbpfFile = null;
-                    }
-                }
+            FileInputStream fis = null;
+            FileChannel fc = null;
+            try {
+                fis = new FileInputStream(mapFile);
+                fc = fis.getChannel();
+                MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+                dbpfFile.mappedByteBuffer = mbb;
+                return dbpfFile;
+//                } catch (FileNotFoundException e) {
+//                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] File not found: " + mapFile, e);
+//                    dbpfFile = null;
+//                } catch (IOException e) {
+//                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] IOException for file: " + mapFile, e);
+//                    dbpfFile = null;
+            } finally {
+                closeAll(fc, fis);
             }
-            return dbpfFile;
         }
 
         private static void initTmpDir() throws IOException {
@@ -677,20 +680,20 @@ public class DBPFFile {
          * 
          * @param filename
          *            The file of the DBPF file to read.
-         * @return The DBPF file object or NULL, if file not found or other type of error occured.
+         * @return The DBPF file object.
          * 
+         * @throws DBPFFileFormatException if {@link #checkFileType} returns {@code false}.
+         * @throws FileNotFoundException if the file does not exist or is inaccessible.
+         * @throws IOException in case of an IO issue.
+         *
          * @see #read(File)
          * @see #readMapped(File)
          * @see DBPFFile
          * @see FileChannel#map(FileChannel.MapMode, long, long)
          */
-        public static DBPFFile readCached(File filename) {
-            try {
-                initTmpDir();
-            } catch (IOException e) {
-                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] " + e.getMessage(), e);
-                return null;
-            }
+        public static DBPFFile readCached(File filename) throws DBPFFileFormatException, FileNotFoundException, IOException {
+            initTmpDir();
+            
             File tmpFile = new File(TMP_DIR, String.format("%s_%08X_%X_%s",
                     filename.getName(), filename.getAbsolutePath().hashCode(),
                     filename.lastModified(), JVM_ID));
@@ -712,31 +715,28 @@ public class DBPFFile {
                     if (count != size) {
                         throw new IOException("Could not transfer file: " + filename);
                     }
-                } catch (FileNotFoundException e) {
-                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] File not found: " + filename, e);
-                    return null;
-                } catch (IOException e) {
-                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] IOException for file: " + filename, e);
-                    return null;
+//                } catch (FileNotFoundException e) {
+//                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] File not found: " + filename, e);
+//                    return null;
+//                } catch (IOException e) {
+//                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] IOException for file: " + filename, e);
+//                    return null;
                 } finally {
-                    if (exceptionalClose("Reader", filename, src, fis, target, fos)) {
-                        return null;
-                    }
+                    closeAll(src, fis, target, fos);
                 }
             } else {
                 // TODO temporary! should make use of existing copied files across different JVMs
-                // if tmp file has not been copied completely yet, then poll in 0.1s time steps
+                // if tmp file has not been copied completely yet, then poll in 0.2s time steps
                 long fileLength = filename.length();
-                for (int step = 100, total = 0; tmpFile.length() != fileLength; total += step) {
+                for (int step = 200, total = 0; tmpFile.length() != fileLength; total += step) {
                     if (total >= MAX_POLL_TIME) {
-                        DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] Cannot read cached file: " + tmpFile);
-                        return null;
+                        throw new IOException("Maximum poll time exceeded. Cannot read cached file: " + tmpFile);
                     }
                     try {
                         Thread.sleep(step);
                     } catch (InterruptedException e) {
-                        DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Reader] Interrupted during caching of file: " + filename, e);
-                        return null;
+                        Thread.currentThread().interrupt();
+                        throw new InterruptedIOException("Interrupted during caching of file: " + filename);
                     }
                 }
                 DBPFUtil.LOGGER.log(Level.INFO, "[DBPFFile.Reader] File {0} is already cached", filename.getName());
@@ -745,25 +745,30 @@ public class DBPFFile {
             
             // tmp file exists now
             DBPFFile dbpfFile = readMapped(filename, tmpFile);
+            assert dbpfFile != null;
             if (dbpfFile != null) {
                 dbpfFile.tmpFile = tmpFile;
             }
             return dbpfFile;
         }
         
-        private static boolean exceptionalClose(String sourceName, File filename, Closeable... closeables) {
-            boolean result = false;
+        private static void closeAll(Closeable... closeables) throws IOException {
+            IOException cause = null;
             for (Closeable c : closeables) {
                 if (c != null) {
                     try {
                         c.close();
                     } catch (IOException e) {
-                        DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile." + sourceName + "] IOException for file: " + filename, e);
-                        result = true; 
+//                        DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile." + sourceName + "] IOException for file: " + filename, e);
+                        if (cause != null) {
+                            cause = e;
+                        }
                     }
                 }
             }
-            return result;
+            if (cause != null) {
+                throw new IOException(cause);
+            }
         }
         
         private static String readChars(RandomAccessFile raf, int length) throws IOException {
@@ -1040,9 +1045,7 @@ public class DBPFFile {
 //                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] IOException for file: " + file, e);
 //                return false;
             } finally {
-                if (Reader.exceptionalClose("Writer", file, fc, raf)) {
-                    return false;
-                }
+                Reader.closeAll(fc, raf);
             }
             return true;
         }
