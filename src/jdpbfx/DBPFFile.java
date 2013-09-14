@@ -575,7 +575,7 @@ public class DBPFFile {
                         long iid = buf.getInt() & 0xffffffffL; //readUint32(raf, 4);
                         long offset = buf.getInt() & 0xffffffffL; //readUint32(raf, 4);
                         long size = buf.getInt() & 0xffffffffL; //readUint32(raf, 4);
-                        DBPFTGI tgi = new DBPFTGI(tid, gid, iid);
+                        DBPFTGI tgi = DBPFTGI.valueOf(tid, gid, iid);
                         DirectDBPFEntry entry = dbpfFile.new DirectDBPFEntry(tgi, offset, size, i);
                         dbpfFile.addEntry(entry);
 

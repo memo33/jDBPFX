@@ -324,7 +324,7 @@ public class DBPFExemplar extends DBPFType {
      */
     private void createExemplarB(byte[] dData) {
         // Reading the exemplars TGI
-        this.cohortTGI = new DBPFTGI(DBPFUtil.getUint(dData, 0x08, 4),
+        this.cohortTGI = DBPFTGI.valueOf(DBPFUtil.getUint(dData, 0x08, 4),
                                           DBPFUtil.getUint(dData, 0x0C, 4),
                                           DBPFUtil.getUint(dData, 0x10, 4));
 
@@ -372,7 +372,7 @@ public class DBPFExemplar extends DBPFType {
         String[] nameValue = lines.get(start).split("=");
         String[] value = nameValue[1].split(":");
         String[] coTGI = value[1].split(",");
-        cohortTGI = new DBPFTGI(Long.decode(coTGI[0].substring(1)),
+        cohortTGI = DBPFTGI.valueOf(Long.decode(coTGI[0].substring(1)),
                                           Long.decode(coTGI[1]),
                                           Long.decode(coTGI[2].substring(0, 10)));
 

@@ -7,7 +7,8 @@ import jdpbfx.util.DBPFUtil;
 
 /**
  * The {@code DBPFTGI} class encapsulates a type, group and instance identifier.
- * TGI objects are immutable.  Each component is limited to 32 bits or the null
+ * TGI objects are immutable and can be obtained by a call to the static factory
+ * method {@link #valueOf}. Each component is limited to 32 bits or the null
  * value -1 (used as a mask in certain functions).
  * <p>
  * The method {@link DBPFTGI#matches(DBPFTGI)} may be used to determine
@@ -24,15 +25,34 @@ public class DBPFTGI {
     private final long type;
     private final long group;
     private final long instance;
+    
+    /**
+     * Static factory method that returns a {@code DBPFTGI} object. Components
+     * are stored as longs to avoid sign problems. -1 can be used as {@code null}
+     * value.
+     * <p>
+     * Whether two TGIs {@code tgi1} and {@code tgi2} returned by this method that
+     * satisfy {@code tgi1.equals(tgi2)} will also satisfy {@code tgi1 == tgi2}
+     * is unspecified.
+     * 
+     * @param type 32-bit type identifier.
+     * @param group 32-bit group identifier.
+     * @param instance 32-bit instance identifier.
+     * @return a TGI object.
+     */
+    public static DBPFTGI valueOf(long type, long group, long instance) {
+        return new DBPFTGI(type, group, instance);
+    }
 
     /**
      * Creates a TGI. Components are stored as longs to avoid sign problems.
+     * -1 can be used as {@code null} value.
      * 
      * @param type 32-bit type identifier.
      * @param group 32-bit group identifier.
      * @param instance 32-bit instance identifier.
      */
-    public DBPFTGI(long type, long group, long instance) {
+    private DBPFTGI(long type, long group, long instance) {
         if(type >= -1L && type <= 0xFFFFFFFFL)
             this.type = type;
         else
@@ -184,11 +204,11 @@ public class DBPFTGI {
      *
      * @param modifier The TGI to use to modify this one
      * 
-     * @return a new DBPFTGI instance with the modified fields.
+     * @return a DBPFTGI object with the modified fields.
      */
     public DBPFTGI modifyTGI(DBPFTGI modifier) {
         if (modifier == null) {
-            return new DBPFTGI(this.type, this.group, this.instance);
+            return this;
         } else {
             return this.modifyTGI(modifier.getType(),
                     modifier.getGroup(),
@@ -206,12 +226,12 @@ public class DBPFTGI {
      * @param g The group id to change to or -1 as a mask
      * @param i The instance id to change to or -1 as a mask
      * 
-     * @return a new DBPFTGI instance with the modified fields.
+     * @return a DBPFTGI object with the modified fields.
      */
     public DBPFTGI modifyTGI(long t, long g, long i) {
-        return new DBPFTGI(t == -1L ? this.type : t,
-                g == -1L ? this.group : g,
-                        i == -1L ? this.instance : i);
+        return DBPFTGI.valueOf(t == -1L ? this.type : t,
+                               g == -1L ? this.group : g,
+                               i == -1L ? this.instance : i);
     }
 
     /** BLANKTGI <p> (0, 0, 0) */
