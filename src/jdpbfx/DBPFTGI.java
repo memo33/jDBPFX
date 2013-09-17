@@ -102,7 +102,7 @@ public class DBPFTGI {
             }
         }
         // cannot occur as NULLTGI always matches
-        throw new RuntimeException("Compilation problem: NULLTGI has not been added to Mask.values.");
+        throw new AssertionError("Compilation problem: NULLTGI has not been added to Mask.values.");
     }
 
     /**
@@ -142,21 +142,25 @@ public class DBPFTGI {
      *         obj is not a TGI.
      */
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if(obj instanceof DBPFTGI) {
             DBPFTGI tgiObj = (DBPFTGI) obj;
-            if(this.type == tgiObj.getType() && this.group == tgiObj.getGroup() && this.instance == tgiObj.getInstance())
-                return true;
+            return this.type == tgiObj.type &&
+                    this.group == tgiObj.group &&
+                    this.instance == tgiObj.instance;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
-    public int hashCode() {
-        long combined = this.type ^ this.group ^ this.instance;
-        if(combined > Integer.MAX_VALUE)
-            combined += 2 * Integer.MIN_VALUE;
-        return Long.valueOf(combined).intValue();
+    public final int hashCode() {
+        final int prime = 4229;
+        int result = 1;
+        result = prime * result + (int) type;
+        result = prime * result + (int) instance;
+        result = prime * result + (int) group;
+        return result;
     }
 
     @Override
@@ -189,10 +193,7 @@ public class DBPFTGI {
         boolean tidOK = (tgiMask.isTypeNull()) || (type == tgiMask.getType());
         boolean gidOK = (tgiMask.isGroupNull()) || (group == tgiMask.getGroup());
         boolean iidOK = (tgiMask.isInstanceNull()) || (instance == tgiMask.getInstance());
-        if (tidOK && gidOK && iidOK) {
-            return true;
-        }
-        return false;
+        return tidOK && gidOK && iidOK;
     }
 
     /**
