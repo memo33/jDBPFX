@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jdpbfx.DBPFTGI;
+import jdpbfx.DBPFType;
 import jdpbfx.util.DBPFUtil;
 
 //import gr.zdimensions.jsquish.Squish;
@@ -130,11 +131,6 @@ public class DBPFFSH extends DBPFType {
     @Override
     public Type getType() {
         return DBPFType.Type.FSH;
-    }
-
-    @Override
-    public DBPFTGI getTGIMask() {
-        return DBPFTGI.FSH;
     }
 
     private void readImageData(ImageIndex entry, byte[] data) {

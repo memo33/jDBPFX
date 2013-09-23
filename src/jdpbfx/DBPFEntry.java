@@ -3,7 +3,6 @@ package jdpbfx;
 import java.nio.channels.ReadableByteChannel;
 
 import jdpbfx.DBPFFile.DirectDBPFEntry;
-import jdpbfx.types.DBPFType;
 
 /**
  * An abstract form of an entry of a {@link DBPFFile}, representing an instance

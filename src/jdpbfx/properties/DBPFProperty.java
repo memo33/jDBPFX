@@ -74,7 +74,7 @@ public abstract class DBPFProperty {
         return dataType;
     }
 
-    public Class getReturnType() {
+    public Class<?> getReturnType() {
         return values.getClass().getComponentType();
     }
 

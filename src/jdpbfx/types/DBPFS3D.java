@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import jdpbfx.DBPFTGI;
+import jdpbfx.DBPFType;
 import jdpbfx.util.DBPFUtil;
 
 /**
@@ -347,11 +348,6 @@ public class DBPFS3D extends DBPFType {
     @Override
     public Type getType() {
         return DBPFType.Type.S3D;
-    }
-
-    @Override
-    public DBPFTGI getTGIMask() {
-        return DBPFTGI.S3D;
     }
 
     public List<Vert> getPolys(long frame, long group) {

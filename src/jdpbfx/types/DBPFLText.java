@@ -1,22 +1,28 @@
 package jdpbfx.types;
 
 import jdpbfx.DBPFTGI;
+import jdpbfx.DBPFType;
 import jdpbfx.util.DBPFUtil;
 
 /**
  * @author Jon
+ * @author memo
  */
-public class DBPFLText extends DBPFType {
-
-    private char[] data;
-
-    private boolean modified;
+public class DBPFLText extends AbstractTextType {
 
     /**
      * Constructor.
+     * 
+     * @param data
+     *          the uncompressed byte data of the entry.
+     * @param tgi
+     *          the TGI.
+     * @param compressed
+     *          If {@code true}, the method {@link DBPFType#createData} will
+     *          return the compressed byte data, else uncompressed.
      */
     public DBPFLText(byte[] data, DBPFTGI tgi, boolean compressed) {
-        super(tgi);
+        super(tgi); // does not initialize data fields
         this.rawData = data;
         this.compressed = compressed;
         this.modified = false;
@@ -50,25 +56,6 @@ public class DBPFLText extends DBPFType {
     }*/
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
-        sb.append(", Data-Size: ");
-        sb.append(data.length);
-        return sb.toString();
-    }
-
-    @Override
-    public String toDetailString() {
-        StringBuilder sb = new StringBuilder(toString());
-        if (data.length > 0) {
-            sb.append("\n");
-            sb.append(data);
-        }
-        return sb.toString();
-    }
-
-    @Override
     public boolean setTGI(DBPFTGI tgi) {
         if(tgi != null && tgi.matches(DBPFTGI.WAV)) {
             return false;
@@ -83,21 +70,13 @@ public class DBPFLText extends DBPFType {
      * @param s
      *            The string
      */
+    @Override
     public void setString(String s) {
         this.data = new char[s.length()];
         s.getChars(0, s.length(), data, 0);
         // 4 (UNICODE Identifier), 2*dataLength (UNICODE Char)
         this.decompressedSize = 4 + 2 * data.length;
         this.modified = true;
-    }
-
-    /**
-     * Returns the string.<br>
-     *
-     * @return The data
-     */
-    public String getString() {
-        return new String(data);
     }
 
     @Override
@@ -120,10 +99,5 @@ public class DBPFLText extends DBPFType {
     @Override
     public Type getType() {
         return DBPFType.Type.LTEXT;
-    }
-
-    @Override
-    public DBPFTGI getTGIMask() {
-        return DBPFTGI.LTEXT;
     }
 }

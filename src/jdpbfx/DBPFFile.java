@@ -26,6 +26,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.logging.Level;
 
+import jdpbfx.DBPFType.Type;
 import jdpbfx.types.DBPFCohort;
 import jdpbfx.types.DBPFDirectory;
 import jdpbfx.types.DBPFExemplar;
@@ -34,10 +35,8 @@ import jdpbfx.types.DBPFLText;
 import jdpbfx.types.DBPFLUA;
 import jdpbfx.types.DBPFPNG;
 import jdpbfx.types.DBPFRUL;
-import jdpbfx.types.DBPFRaw;
 import jdpbfx.types.DBPFS3D;
 import jdpbfx.types.DBPFSC4Path;
-import jdpbfx.types.DBPFType;
 import jdpbfx.util.DBPFPackager;
 import jdpbfx.util.DBPFUtil;
 
@@ -1357,63 +1356,34 @@ public class DBPFFile {
          * Reads the data associated with the given entry and returns as a base
          * {@code DBPFType}.
          * <p>
-         * If {@code onlyRawType} is true, or if an appropriate type is not availabel,
+         * If {@code onlyRawType} is true, or if an appropriate type is not available,
          * this method will return {@code DBPFRaw} objects, - otherwise the returned
          * objects will be of the appropriate {@code  DBPFType}.
          *
          * @param onlyRawType
-         *      TRUE, if only {@code  DBPFRaw} types with no decompression or decoding
+         *      TRUE, if only {@code DBPFRaw} types with no decompression or decoding
          *      are to be returned
-         * @return The {@code  DBPFType}.
+         * @return The {@code  DBPFType}, never {@code null}.
          * 
          * @see DBPFFile#getEntries()
          */
         public DBPFType createType(boolean onlyRawType) {
-            // System.out.println("Entry: "+entry.toString()+","+entry.getFile());
-            // read rawdata from entry
             byte[] data = this.createData();
             DBPFTGI tgi = this.getTGI();
-            DBPFPackager packager = new DBPFPackager();
-            byte[] dData = packager.decompress(data);
-
+            
             if (onlyRawType) {
-                return new DBPFRaw(data, tgi, packager.isCompressed(), packager.getDecompressedSize());
+                return Type.RAW.createType(data, tgi);
             }
-
-            DBPFType type = null;
-            if (tgi.matches(DBPFTGI.EXEMPLAR)) {
-                type = new DBPFExemplar(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.COHORT)) {
-                type = new DBPFCohort(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.PNG)) {
-                type = new DBPFPNG(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.WAV)) {
-                // TODO not implemented yet, so use DBPFRaw
-                type = null;
-            } else if (tgi.matches(DBPFTGI.LTEXT)) {
-                type = new DBPFLText(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.DIRECTORY)) {
-                type = new DBPFDirectory();
-                ((DBPFDirectory) type).setData(data);
-            } else if (tgi.matches(DBPFTGI.LUA)) {
-                type = new DBPFLUA(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.LUA_GEN)) {
-                type = new DBPFLUA(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.RUL)) {
-                type = new DBPFRUL(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.FSH)) {
-                type = new DBPFFSH(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.S3D)) {
-                // TODO check S3D type conversion
-                type = new DBPFS3D(dData, tgi, packager.isCompressed());
-            } else if (tgi.matches(DBPFTGI.SC4PATH)) {
-                type = new DBPFSC4Path(dData, tgi, packager.isCompressed());
+            
+            DBPFType result = null;
+            for (Type type : Type.values()) {
+                if (tgi.matches(type.getTGIMask())) {
+                    result = type.createType(data, tgi);
+                    assert type != Type.RAW || result != null;
+                    return result != null ? result : Type.RAW.createType(data, tgi);
+                }
             }
-
-            if (type == null) {
-                type = new DBPFRaw(data, tgi, packager.isCompressed(), packager.getDecompressedSize());
-            }
-            return type;
+            throw new AssertionError("In any case, the creation of a raw type must succeed.");
         }
         
         /**

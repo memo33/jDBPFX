@@ -1,6 +1,7 @@
 package jdpbfx.types;
 
 import jdpbfx.DBPFTGI;
+import jdpbfx.DBPFType;
 
 /**
  * @author Jon
@@ -63,14 +64,6 @@ public class DBPFRaw extends DBPFType {
     @Override
     public Type getType() {
         return DBPFType.Type.RAW;
-    }
-
-    /**
-     * @return the {@link DBPFTGI#NULLTGI} which will match for any TGI.
-     */
-    @Override
-    public DBPFTGI getTGIMask() {
-        return DBPFTGI.NULLTGI;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package jdpbfx.types;
 
 import jdpbfx.DBPFTGI;
+import jdpbfx.DBPFType;
 
 /**
  * @author Jon
@@ -39,10 +40,5 @@ public class DBPFPNG extends DBPFType {
     @Override
     public Type getType() {
         return DBPFType.Type.PNG;
-    }
-
-    @Override
-    public DBPFTGI getTGIMask() {
-        return DBPFTGI.PNG;
     }
 }

@@ -1,6 +1,7 @@
 package jdpbfx.types;
 
 import jdpbfx.DBPFTGI;
+import jdpbfx.DBPFType;
 
 /**
  * @author Jon
@@ -62,11 +63,6 @@ public class DBPFDirectory extends DBPFType {
     @Override
     public Type getType() {
         return DBPFType.Type.DIRECTORY;
-    }
-    
-    @Override
-    public DBPFTGI getTGIMask() {
-        return DBPFTGI.DIRECTORY;
     }
 
     @Override

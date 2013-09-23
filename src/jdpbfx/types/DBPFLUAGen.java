@@ -4,10 +4,13 @@ import jdpbfx.DBPFTGI;
 import jdpbfx.DBPFType;
 
 /**
- * @author Jon
+ * This class behaves exactly as {@link DBPFLUA} except that its method
+ * {@link #getType} returns {@code LUA_GEN} instead of {@code LUA}, which has
+ * a different TGI mask.
+ * 
  * @author memo
  */
-public class DBPFLUA extends AbstractTextType {
+public class DBPFLUAGen extends DBPFLUA {
 
     /**
      * Constructor.
@@ -20,23 +23,12 @@ public class DBPFLUA extends AbstractTextType {
      *          If {@code true}, the method {@link DBPFType#createData} will
      *          return the compressed byte data, else uncompressed.
      */
-    public DBPFLUA(byte[] data, DBPFTGI tgi, boolean compressed) {
+    public DBPFLUAGen(byte[] data, DBPFTGI tgi, boolean compressed) {
         super(data, tgi, compressed);
     }
-
-    /**
-     * Constructor.<br>
-     *
-    public DBPFLUA(char[] data, DBPFTGI tgi, boolean compressed) {
-        super();
-        this.tgi = tgi;
-        this.data = data;
-        this.compressed = compressed;
-        this.decompressedSize = data.length;
-    }*/
-
+    
     @Override
     public Type getType() {
-        return DBPFType.Type.LUA;
+        return DBPFType.Type.LUA_GEN;
     }
 }
