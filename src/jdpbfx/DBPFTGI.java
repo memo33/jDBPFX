@@ -244,6 +244,42 @@ public class DBPFTGI {
     /** LD file <p> (0x6be74c60, 0x6be74c60, -1) */
     public static final DBPFTGI LD;
 
+    /** Exemplar file: road network <p> (0x6534284a, 0x2821ed93, -1) */
+    public static final DBPFTGI EXEMPLAR_ROAD;
+
+    /** Exemplar file: street network <p> (0x6534284a, 0xa92a02ea, -1) */
+    public static final DBPFTGI EXEMPLAR_STREET;
+    
+    /** Exemplar file: one-way road network <p> (0x6534284a, 0xcbe084cb, -1) */
+    public static final DBPFTGI EXEMPLAR_ONEWAYROAD;
+    
+    /** Exemplar file: avenue network <p> (0x6534284a, 0xcb730fac, -1) */
+    public static final DBPFTGI EXEMPLAR_AVENUE;
+    
+    /** Exemplar file: elevated highway network <p> (0x6534284a, 0xa8434037, -1) */
+    public static final DBPFTGI EXEMPLAR_HIGHWAY;
+    
+    /** Exemplar file: ground highway network <p> (0x6534284a, 0xebe084d1, -1) */
+    public static final DBPFTGI EXEMPLAR_GROUNDHIGHWAY;
+    
+    /** Exemplar file: dirtroad/ANT/RHW network <p> (0x6534284a, 0x6be08658, -1) */
+    public static final DBPFTGI EXEMPLAR_DIRTROAD;
+    
+    /** Exemplar file: rail network <p> (0x6534284a, 0xe8347989, -1) */
+    public static final DBPFTGI EXEMPLAR_RAIL;
+    
+    /** Exemplar file: lightrail network <p> (0x6534284a, 0x2b79dffb, -1) */
+    public static final DBPFTGI EXEMPLAR_LIGHTRAIL;
+    
+    /** Exemplar file: monorail network <p> (0x6534284a, 0xebe084c2, -1) */
+    public static final DBPFTGI EXEMPLAR_MONORAIL;
+    
+    /** Exemplar file: power poles network <p> (0x6534284a, 0x088e1962, -1) */
+    public static final DBPFTGI EXEMPLAR_POWERPOLE;
+    
+    /** Exemplar file: Type 21 <p> (0x6534284a, 0x89AC5643, -1) */
+    public static final DBPFTGI EXEMPLAR_T21;
+    
     /** Exemplar file: LotInfo, LotConfig <p> (0x6534284a, -1, -1) */
     public static final DBPFTGI EXEMPLAR;
 
@@ -332,9 +368,22 @@ public class DBPFTGI {
         BLANKTGI                = new Mask(0L, 0L, 0L, "-");
         DIRECTORY               = new Mask(0xe86b1eefL, 0xe86b1eefL, 0x286b1f03L, "DIR");
         LD                      = new Mask(0x6be74c60L, 0x6be74c60L, -1L, "LD");
-        EXEMPLAR                = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
-        COHORT                  = new Mask(0x05342861L, -1L, -1L, "COHORT");
         S3D                     = new Mask(0x5ad0e817L, -1L, -1L, "S3D");
+        COHORT                  = new Mask(0x05342861L, -1L, -1L, "COHORT");
+        
+        EXEMPLAR_ROAD           = new Mask(0x6534284aL, 0x2821ed93L, -1L, "EXEMPLAR (Road)");
+        EXEMPLAR_STREET         = new Mask(0x6534284aL, 0xa92a02eaL, -1L, "EXEMPLAR (Street)");
+        EXEMPLAR_ONEWAYROAD     = new Mask(0x6534284aL, 0xcbe084cbL, -1L, "EXEMPLAR (One-Way Road)");
+        EXEMPLAR_AVENUE         = new Mask(0x6534284aL, 0xcb730facL, -1L, "EXEMPLAR (Avenue)");
+        EXEMPLAR_HIGHWAY        = new Mask(0x6534284aL, 0xa8434037L, -1L, "EXEMPLAR (Highway)");
+        EXEMPLAR_GROUNDHIGHWAY  = new Mask(0x6534284aL, 0xebe084d1L, -1L, "EXEMPLAR (Ground Highway)");
+        EXEMPLAR_DIRTROAD       = new Mask(0x6534284aL, 0x6be08658L, -1L, "EXEMPLAR (Dirtroad)");
+        EXEMPLAR_RAIL           = new Mask(0x6534284aL, 0xe8347989L, -1L, "EXEMPLAR (Rail)");
+        EXEMPLAR_LIGHTRAIL      = new Mask(0x6534284aL, 0x2b79dffbL, -1L, "EXEMPLAR (Lightrail)");
+        EXEMPLAR_MONORAIL       = new Mask(0x6534284aL, 0xebe084c2L, -1L, "EXEMPLAR (Monorail)");
+        EXEMPLAR_POWERPOLE      = new Mask(0x6534284aL, 0x088e1962L, -1L, "EXEMPLAR (Power Pole)");
+        EXEMPLAR_T21            = new Mask(0x6534284aL, 0x89ac5643L, -1L, "EXEMPLAR (T21)");
+        EXEMPLAR                = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
         
         FSH_TRANSIT             = new Mask(0x7ab50e44L, 0x1abe787dL, -1L, "FSH (Transit Texture)");
         FSH_BASE_OVERLAY        = new Mask(0x7ab50e44L, 0x0986135eL, -1L, "FSH (Base/Overlay Texture)");
