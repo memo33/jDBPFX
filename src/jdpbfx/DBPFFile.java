@@ -68,7 +68,7 @@ import jdpbfx.util.DBPFUtil;
  * underlying file on disk, but does not copy all the data into heap space.
  * For a {@code DBPFFile} created via the {@link Reader#read(File)} method this means
  * that its {@code DirectDBPFEntries} cannot be written to the same file they are read
- * from (which will result in an {@link UnsupportedOperationException}), unless
+ * from (which will result in an {@link IllegalStateException}), unless
  * you convert all the entries to {@link DBPFType DBPFTypes} (which in turn is
  * memory-intensive and does not take advantage of streaming).
  * <p>
@@ -813,14 +813,14 @@ public class DBPFFile {
          * @param writeList a list of entries that have been updated.
          * @return TRUE, if successfully written; FALSE, otherwise.
          * 
-         * @throws UnsupportedOperationException
+         * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
          */
-        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException, FileNotFoundException, IOException {
+        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws IllegalStateException, FileNotFoundException, IOException {
             return update(dbpfFile, writeList, dbpfFile.getFile(), true);
         }
 
@@ -842,14 +842,14 @@ public class DBPFFile {
          * @param newFile the new file location.
          * @return TRUE, if successfully written; FALSE, otherwise.
          * 
-         * @throws UnsupportedOperationException
+         * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
          */
-        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws UnsupportedOperationException, FileNotFoundException, IOException {
+        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws IllegalStateException, FileNotFoundException, IOException {
             return update(dbpfFile, writeList, newFile, false);
         }
         
@@ -874,14 +874,14 @@ public class DBPFFile {
          *      the current date is to be used.
          * @return TRUE, if successfully written; FALSE, otherwise.
          * 
-         * @throws UnsupportedOperationException
+         * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
          */
-        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile, boolean preserveDateCreated) throws UnsupportedOperationException, FileNotFoundException, IOException {
+        public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile, boolean preserveDateCreated) throws IllegalStateException, FileNotFoundException, IOException {
             // create map view of writeList for fast look-up
             int writeListSize = writeList.size();
             Map<DBPFTGI, DBPFEntry> updatedEntries =
@@ -916,14 +916,14 @@ public class DBPFFile {
          *      the list of DBPFEntries to write to file.
          * @return TRUE, if successfully written; FALSE, otherwise.
          * 
-         * @throws UnsupportedOperationException
+         * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
          */
-        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException, FileNotFoundException, IOException {
+        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList) throws IllegalStateException, FileNotFoundException, IOException {
             return write(dbpfFile.getFile(), writeList, dbpfFile.header.getDateCreated());
         }
 
@@ -944,14 +944,14 @@ public class DBPFFile {
          *      the new file location.
          * @return TRUE, if successfully written; FALSE, otherwise.
          * 
-         * @throws UnsupportedOperationException
+         * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
          */
-        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws UnsupportedOperationException, FileNotFoundException, IOException {
+        public static boolean write(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws IllegalStateException, FileNotFoundException, IOException {
             return write(newFile, writeList, dbpfFile.header.getDateCreated());
         }
 
@@ -967,18 +967,18 @@ public class DBPFFile {
          *      the list of DBPFEntries to write to file.
          * @return TRUE, if successfully written; FALSE, otherwise.
          * 
-         * @throws UnsupportedOperationException
+         * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
          *      which would result in the source file being overwritten.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
          */
-        public static boolean write(File file, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException, FileNotFoundException, IOException {
+        public static boolean write(File file, Collection<? extends DBPFEntry> writeList) throws IllegalStateException, FileNotFoundException, IOException {
             return write(file, writeList, System.currentTimeMillis() / 1000);
         }
 
-        private static void testForOverwritingCollision(File file, Collection<? extends DBPFEntry> writeList) throws UnsupportedOperationException {
+        private static void precludeOverwritingCollision(File file, Collection<? extends DBPFEntry> writeList) throws IllegalStateException {
             for (DBPFEntry entry : writeList) {
                 if (entry instanceof DirectDBPFEntry) {
                     DirectDBPFEntry directEntry = ((DirectDBPFEntry) entry);
@@ -986,7 +986,7 @@ public class DBPFFile {
                             directEntry.getEnclosingDBPFFile().getFile().equals(file)) {
                         // if the dbpf file is not cached into temp memory, overwriting
                         // the same file risks bad data
-                        throw new UnsupportedOperationException("Cannot read from and write" +
+                        throw new IllegalStateException("Cannot read from and write" +
                         		" to the same file, if it is not cached into temporary" +
                                 " memory. Instead, write to a different file or try" +
                                 " to cache the file: " + file);
@@ -996,9 +996,9 @@ public class DBPFFile {
         }
         
         private static boolean write(File file, Collection<? extends DBPFEntry> writeList, long dateCreated)
-                throws UnsupportedOperationException, FileNotFoundException, IOException {
+                throws IllegalStateException, FileNotFoundException, IOException {
             // make sure not to overwrite a file we want to read from
-            testForOverwritingCollision(file, writeList);
+            precludeOverwritingCollision(file, writeList);
 
             RandomAccessFile raf = null;
             FileChannel fc = null;
