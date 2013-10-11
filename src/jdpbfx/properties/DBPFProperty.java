@@ -178,11 +178,11 @@ public abstract class DBPFProperty {
                     return null;
                 } else {
                     if(count == -1) {
-                        prop = new DBPFLongProperty(type, new Long(DBPFUtil.getValue(type, dData, offset, type.length)));
+                        prop = new DBPFLongProperty(type, Long.valueOf(DBPFUtil.getValue(type, dData, offset, type.length)));
                     } else {
                         Long[] values = new Long[count];
                         for(int x=0;x<count;x++) {
-                            values[x] = new Long(DBPFUtil.getValue(type, dData, offset, type.length));
+                            values[x] = Long.valueOf(DBPFUtil.getValue(type, dData, offset, type.length));
                             offset += type.length;
                         }
                         prop = new DBPFLongProperty(type, values);
