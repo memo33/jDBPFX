@@ -793,10 +793,7 @@ public class DBPFFile {
     public static class Writer {
         
         private Writer() {};
-        
-        private static final int COMPRESSION_HEADER_LENGTH = 9;
-        private static final int BUFFER_SIZE = 16 * 1024;
-        
+                
         /**
          * Updates the given DBPF file by the {@code DBPFEntries} in {@code writeList}.
          * <p>
@@ -1007,217 +1004,207 @@ public class DBPFFile {
                 fc = raf.getChannel();
                 DBPFUtil.LOGGER.log(Level.INFO, "[DBPFFile.Writer] Writing {0}", file.getName());
                 
-                final ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE);
-                buf.order(ByteOrder.LITTLE_ENDIAN);
-                long indexOffsetLocation = DBPFFile.Header.HEADER_SIZE;
-                
-                writeHeader(raf, fc, buf, indexOffsetLocation, dateCreated);
-                
-                // Write rawData, remember offset position and store length
-                // Also remember information about compressed files for directory file
-                Queue<DirListData> dirData = new ArrayDeque<DirListData>();
-                Queue<WriteListData> indexData = new ArrayDeque<WriteListData>();
-                final ByteBuffer headerBuf = ByteBuffer.allocate(COMPRESSION_HEADER_LENGTH); // for header of compressed files, allocated here only once for efficiency 
-                for (DBPFEntry entry : writeList) {
-                    if (entry.getTGI().matches(DBPFTGI.DIRECTORY)) {
-                        continue;
-                    }
-                    indexOffsetLocation += transferData(entry,
-                            indexOffsetLocation, dirData, indexData, buf, fc, headerBuf);
-                }
-                // build directory file
-                if (!dirData.isEmpty()) {
-                    DBPFDirectory dir = buildDirectoryFile(dirData);
-                    indexOffsetLocation += transferData(dir,
-                            indexOffsetLocation, dirData, indexData, buf, fc, headerBuf);
-                }
-                flushBuffer(buf, fc);
-                // write index table
-                writeIndex(fc, buf, indexData);
-                // Update index entry count, location and size
-                updateHeader(fc, buf, indexOffsetLocation, indexData.size());
-                fc.force(false);
-//            } catch (FileNotFoundException e) {
-//                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] File not found: " + file, e);
-//                return false;
-//            } catch (IOException e) {
-//                DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.Writer] IOException for file: " + file, e);
-//                return false;
+                new WriteTask(writeList, raf, fc, dateCreated).execute();
             } finally {
                 Reader.closeAll(fc, raf);
             }
             return true;
         }
         
-        private static void writeHeader(RandomAccessFile raf, FileChannel fc, ByteBuffer buf, long indexOffsetLocation, long dateCreated) throws IOException {
-            // create necessary file data
-            String fileType = DBPFUtil.MAGICNUMBER_DBPF;
-            long majorVersion = 1;
-            long minorVersion = 0;
-            //long dateCreated = System.currentTimeMillis() / 1000;
-            long dateModified = System.currentTimeMillis() / 1000;
-            long indexType = 7;
-            long indexEntryCount = 0;//writeList.size();
-            long indexSize = 0;//5 * 4 * indexEntryCount;
-
-            // set minimum file size
-            long count = indexOffsetLocation;// + indexSize;
-            raf.setLength(count);
+        private static class WriteTask {
             
-            // Write header
-            buf.put(fileType.getBytes(Charset.forName("US-ASCII")));//writeChars(raf, fileType);
-            buf.putInt((int) majorVersion);//writeUINT32(raf, majorVersion, 4);
-            buf.putInt((int) minorVersion);//writeUINT32(raf, minorVersion, 4);
-            buf.position(24);//writeUINT32(raf, 0, 12);
-            buf.putInt((int) dateCreated);//writeUINT32(raf, dateCreated, 4);
-            buf.putInt((int) dateModified);//writeUINT32(raf, dateModified, 4);
-            buf.putInt((int) indexType);//writeUINT32(raf, indexType, 4);
-            buf.putInt((int) indexEntryCount);//writeUINT32(raf, indexEntryCount, 4);
-            buf.putInt((int) indexOffsetLocation);//writeUINT32(raf, indexOffsetLocation, 4);
-            buf.putInt((int) indexSize);//writeUINT32(raf, indexSize, 4);
-            buf.position((int) DBPFFile.Header.HEADER_SIZE);//writeUINT32(raf, 0, 48);
-            flushBuffer(buf, fc);
-        }
-        
-        private static void updateHeader(FileChannel fc, ByteBuffer buf, long indexOffsetLocation, long indexEntryCount) throws IOException {
-            // Update index entry count, location and size
-            long indexSize = 5 * 4 * indexEntryCount;
-            fc.position(36);
-            buf.putInt((int) indexEntryCount);
-            buf.putInt((int) indexOffsetLocation);
-            buf.putInt((int) indexSize);
-            flushBuffer(buf, fc);
-        }
-        
-        private static void writeIndex(FileChannel fc, ByteBuffer buf, Queue<WriteListData> indexData) throws IOException {
-          for (WriteListData data : indexData) {
-              buf.putInt((int) data.tgi.getType());//writeUINT32(raf, data.tgi.getType(), 4);
-              buf.putInt((int) data.tgi.getGroup());//writeUINT32(raf, data.tgi.getGroup(), 4);
-              buf.putInt((int) data.tgi.getInstance());//writeUINT32(raf, data.tgi.getInstance(), 4);
-              buf.putInt((int) data.offset);//writeUINT32(raf, data.offset, 4);
-              buf.putInt((int) data.size);//writeUINT32(raf, data.size, 4);
-              if (buf.remaining() < 20) {
-                  flushBuffer(buf, fc);
-              }
-          }
-          flushBuffer(buf, fc);
-        }
+            private static final int COMPRESSION_HEADER_LENGTH = 9;
+            private static final int BUFFER_SIZE = 16 * 1024;
 
-        private static DBPFDirectory buildDirectoryFile(Queue<DirListData> dirEntries) {
-            ByteBuffer buf = ByteBuffer.allocate(dirEntries.size() * 16);
-            buf.order(ByteOrder.LITTLE_ENDIAN);
-            for (DirListData dataEntry: dirEntries) {
-                buf.putInt((int) dataEntry.tgi.getType());
-                buf.putInt((int) dataEntry.tgi.getGroup());
-                buf.putInt((int) dataEntry.tgi.getInstance());
-                buf.putInt((int) dataEntry.decompressedSize);
+            private final Collection<? extends DBPFEntry> writeList;
+            private final RandomAccessFile raf;
+            private final FileChannel fc;
+            private final long dateCreated;
+            private final ByteBuffer buf;
+            private long indexOffsetLocation;
+            private final Queue<DirListData> dirData;
+            private final Queue<WriteListData> indexData;
+            private final ByteBuffer headerBuf;
+            private boolean executed = false;
+            
+            public WriteTask(Collection<? extends DBPFEntry> writeList, RandomAccessFile raf, FileChannel fc, long dateCreated) throws IOException {
+                this.writeList = writeList;
+                this.raf = raf;
+                this.fc = fc;
+                this.dateCreated = dateCreated;
+                buf = ByteBuffer.allocate(BUFFER_SIZE);
+                buf.order(ByteOrder.LITTLE_ENDIAN);
+                indexOffsetLocation = DBPFFile.Header.HEADER_SIZE;
+
+                dirData = new ArrayDeque<DirListData>();
+                indexData = new ArrayDeque<WriteListData>();
+                headerBuf = ByteBuffer.allocate(COMPRESSION_HEADER_LENGTH); // for header of compressed files 
             }
-            return new DBPFDirectory(buf.array());
-        }
-        
-        /**
-         * Transfers this entry's data into the target channel, starting at the
-         * channel's current position combined with possible remaining data in the delivered
-         * <code>ByteBuffer</code>. The data will be retrieved by calling the
-         * <code>createData</code> method.<p>
-         * 
-         * The <code>offset</code> is the offset to which this data will
-         * be transferred. You will have to ensure to add this method's return value
-         * (the length of the data) to your seperate index offset location pointer.<p>
-         * 
-         * The buffer will not be emptied by this method, unless it is full. You will have
-         * to call {@link #flushBuffer} manually, the last time you transfer data.<p>
-         * 
-         * @param entry the entry whose data is to be transferred.
-         * @param offset the offset of the DBPF file's index before
-         *      calling this method. This will be the offset of the data in the
-         *      written file.
-         * @param dirData a queue to which this entry's data will be added that are
-         *      relevant for the DBPF file's index table.
-         * @param indexData a queue to which this entry's data will be added that are
-         *      relevant for the DBPF file's directory file (that is, if this entry
-         *      is compressed).
-         * @param buf a <code>ByteBuffer</code> that will be used for buffering of
-         *      the bytes that are to be transferred. Does not need to be empty. 
-         * @param target the channel the data will be transferred to, relative to
-         *      its current position.
-         * @param headerBuf a <code>ByteBuffer</code> of size 9 that may be used
-         *      to read the header of compressed files.
-         * @return the number of bytes that were transferred, possibly zero
-         *      if the data could not successfully be read.
-         * @throws IOException if any type of IO issue occurs, specifically those
-         *      exceptions thrown by {@link FileChannel#write(ByteBuffer)}.
-         */
-        private static long transferData(DBPFEntry entry, long offset,
-                Queue<DirListData> dirData, Queue<WriteListData> indexData,
-                ByteBuffer buf, FileChannel target, ByteBuffer headerBuf) throws IOException {
-
-            ReadableByteChannel src = null;
-            int size = 0;
-            try {
-                src = entry.createDataChannel();
-                if (src == null) {
-                    DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.DBPFEntry] " +
-                            "Cannot read data of TGI: " + entry.getTGI());
-                    return 0;
-                } // else
-    
-                boolean tooShort = false; // for compression
-                int pos = 0;
-                {
-                    // read first nine bytes to determine possible compression
-                    headerBuf.clear();
-                    for (int count = 0; headerBuf.hasRemaining() && count != -1; ) {
-                        count = src.read(headerBuf);
-                    }
-                    headerBuf.flip();
-                    // put headerBuf's array into larger buf
-                    if (buf.remaining() < headerBuf.remaining()) {
-                        flushBuffer(buf, target);
-                    }
-                    if (headerBuf.remaining() < COMPRESSION_HEADER_LENGTH) {
-                        tooShort = true;
-                    }
-                    pos = headerBuf.remaining();
-                    buf.put(headerBuf);
+            
+            public void execute() throws IOException {
+                if (executed) {
+                    throw new IllegalStateException("Task has already been executed");
                 }
-
-                // write this entry's data to the target channel using the buffer
-                // pos may already have been increased by length of header
-                for (int count; ; pos += count) {
-                    count = src.read(buf);
-                    if (!buf.hasRemaining()) {
-                        flushBuffer(buf, target);
+                executed = true;
+                
+                this.writeHeader();
+                // Write rawData, remember offset position and store length
+                // Also remember information about compressed files for directory file
+                for (DBPFEntry entry : writeList) {
+                    if (entry.getTGI().matches(DBPFTGI.DIRECTORY)) {
+                        continue;
                     }
-                    if (count == -1) {
-                        break;
-                    }
+                    transferData(entry);
                 }
-                size = pos;
-
-                // create Dir and Index Table Data
-                if (!tooShort && DBPFPackager.isCompressed(headerBuf.array())) {
-                    DirListData dataEntry = new DirListData(offset,
-                            size, DBPFPackager.getDecompressedSize(headerBuf.array()), entry.getTGI());
-                    dirData.add(dataEntry);
-                    indexData.add(dataEntry);
-                } else { // if not compressed
-                    indexData.add(new WriteListData(offset, size, entry.getTGI()));
+                // build directory file
+                if (!dirData.isEmpty()) {
+                    DBPFDirectory dir = buildDirectoryFile(dirData);
+                    transferData(dir);
                 }
-            } finally {
-                if (src != null) {
-                    src.close();
-                }
+                flushBuffer();
+                
+                writeIndex();
+                updateHeader();
+                fc.force(false);
             }
-            return size;
-        }
-        
-        private static void flushBuffer(ByteBuffer buf, FileChannel target) throws IOException {
-            buf.flip();
-            while (buf.hasRemaining()) {
-                target.write(buf);
+
+            private void flushBuffer() throws IOException {
+                buf.flip();
+                while (buf.hasRemaining()) {
+                    fc.write(buf);
+                }
+                buf.clear();
             }
-            buf.clear();
+
+            private void writeHeader() throws IOException {
+                // create necessary file data
+                String fileType = DBPFUtil.MAGICNUMBER_DBPF;
+                long majorVersion = 1;
+                long minorVersion = 0;
+                //long dateCreated = System.currentTimeMillis() / 1000;
+                long dateModified = System.currentTimeMillis() / 1000;
+                long indexType = 7;
+                long indexEntryCount = 0;
+                long indexSize = 0;
+            
+                // set minimum file size
+                long count = indexOffsetLocation;// + indexSize;
+                raf.setLength(count);
+                
+                // Write header
+                buf.put(fileType.getBytes(Charset.forName("US-ASCII")));
+                buf.putInt((int) majorVersion);
+                buf.putInt((int) minorVersion);
+                buf.position(24);
+                buf.putInt((int) dateCreated);
+                buf.putInt((int) dateModified);
+                buf.putInt((int) indexType);
+                buf.putInt((int) indexEntryCount);
+                buf.putInt((int) indexOffsetLocation);
+                buf.putInt((int) indexSize);
+                buf.position((int) DBPFFile.Header.HEADER_SIZE);
+                flushBuffer();
+            }
+            
+            private void transferData(DBPFEntry entry) throws IOException {
+                ReadableByteChannel src = null;
+                int size = 0;
+                try {
+                    src = entry.createDataChannel();
+                    if (src == null) {
+                        DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.DBPFEntry] " +
+                                "Cannot read data of TGI: " + entry.getTGI());
+                        return;
+                    } // else
+            
+                    boolean tooShort = false; // for compression
+                    int pos = 0;
+                    {
+                        // read first nine bytes to determine possible compression
+                        headerBuf.clear();
+                        for (int count = 0; headerBuf.hasRemaining() && count != -1; ) {
+                            count = src.read(headerBuf);
+                        }
+                        headerBuf.flip();
+                        // put headerBuf's array into larger buf
+                        if (buf.remaining() < headerBuf.remaining()) {
+                            flushBuffer();
+                        }
+                        if (headerBuf.remaining() < COMPRESSION_HEADER_LENGTH) {
+                            tooShort = true;
+                        }
+                        pos = headerBuf.remaining();
+                        buf.put(headerBuf);
+                    }
+            
+                    // write this entry's data to the target channel using the buffer
+                    // pos may already have been increased by length of header
+                    for (int count; ; pos += count) {
+                        count = src.read(buf);
+                        if (!buf.hasRemaining()) {
+                            flushBuffer();
+                        }
+                        if (count == -1) {
+                            break;
+                        }
+                    }
+                    size = pos;
+            
+                    // create Dir and Index Table Data
+                    if (!tooShort && DBPFPackager.isCompressed(headerBuf.array())) {
+                        DirListData dataEntry = new DirListData(indexOffsetLocation,
+                                size, DBPFPackager.getDecompressedSize(headerBuf.array()), entry.getTGI());
+                        dirData.add(dataEntry);
+                        indexData.add(dataEntry);
+                    } else { // if not compressed
+                        indexData.add(new WriteListData(indexOffsetLocation, size, entry.getTGI()));
+                    }
+                } finally {
+                    if (src != null) {
+                        src.close();
+                    }
+                }
+                indexOffsetLocation += size;
+            }
+
+            private DBPFDirectory buildDirectoryFile(final Queue<DirListData> dirData) {
+                ByteBuffer buf = ByteBuffer.allocate(dirData.size() * 16);
+                buf.order(ByteOrder.LITTLE_ENDIAN);
+                for (DirListData dataEntry: dirData) {
+                    buf.putInt((int) dataEntry.tgi.getType());
+                    buf.putInt((int) dataEntry.tgi.getGroup());
+                    buf.putInt((int) dataEntry.tgi.getInstance());
+                    buf.putInt((int) dataEntry.decompressedSize);
+                }
+                return new DBPFDirectory(buf.array());
+            }
+
+            private void writeIndex() throws IOException {
+                // write index table
+                for (WriteListData data : indexData) {
+                    buf.putInt((int) data.tgi.getType());
+                    buf.putInt((int) data.tgi.getGroup());
+                    buf.putInt((int) data.tgi.getInstance());
+                    buf.putInt((int) data.offset);
+                    buf.putInt((int) data.size);
+                    if (buf.remaining() < 20) {
+                        flushBuffer();
+                    }
+                }
+                flushBuffer();
+            }
+
+            private void updateHeader() throws IOException {
+                // Update index entry count, location and size
+                int indexEntryCount = indexData.size();
+                long indexSize = 5 * 4 * indexEntryCount;
+                fc.position(36);
+                buf.putInt((int) indexEntryCount);
+                buf.putInt((int) indexOffsetLocation);
+                buf.putInt((int) indexSize);
+                flushBuffer();
+            }
+
         }
         
         private static class WriteListData {
