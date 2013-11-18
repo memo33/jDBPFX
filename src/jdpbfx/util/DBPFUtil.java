@@ -52,7 +52,7 @@ public class DBPFUtil {
     public static final String MAGICNUMBER_SHPI = "SHPI";
 
     /**
-     * Magic number for FSH files
+     * Magic number for S3D files
      */
     public static final String MAGICNUMBER_3DMD = "3DMD";
 

@@ -51,6 +51,13 @@ public class DBPFPackager {
         if (data.length > 6) {
             int signature = (int) DBPFUtil.getUint(data, 0x04, 2);
             if (signature == DBPFUtil.MAGICNUMBER_QFS) {
+                // there is an s3d file in SC1.dat which would otherwise
+                // return true on uncompressed data,
+                // this workaround is not failproof
+                String fileType = DBPFUtil.getChars(data, 0x00, 4);
+                if (fileType.equals(DBPFUtil.MAGICNUMBER_3DMD)) {
+                    return false;
+                }
                 return true;
             }
         }
@@ -377,7 +384,9 @@ public class DBPFPackager {
             // if not compressed
             decompressedSize = compressedSize;
 
-            if (signature == DBPFUtil.MAGICNUMBER_QFS) {
+            if (signature == DBPFUtil.MAGICNUMBER_QFS
+                    // see static isCompressed method for explanation
+                    && !DBPFUtil.getChars(cData, 0x00, 4).equals(DBPFUtil.MAGICNUMBER_3DMD)) {
                 //decompressed size is stored big endian in contrast to everything else stored little endian
                 decompressedSize = DBPFUtil.getUint(cData, 0x06, 1) * 0x10000
                                    + DBPFUtil.getUint(cData, 0x07, 1) * 0x100
