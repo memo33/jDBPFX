@@ -4,3 +4,10 @@
 *.jar
 *.war
 *.ear
+
+# build folders #
+bin/
+dist/
+doc/
+manifest.txt
+
