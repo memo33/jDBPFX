@@ -293,7 +293,11 @@ public class DBPFTGI {
     public static final DBPFTGI PNG;
 
     /** FSH file: Transit Textures/Buildings/Bridges/Misc <p> (0x7ab50e44, 0x1abe787d, -1) */
+    @Deprecated
     public static final DBPFTGI FSH_TRANSIT;
+    
+    /** FSH file: Transit Textures/Buildings/Bridges/Misc <p> (0x7ab50e44, 0x1abe787d, -1) */
+    public static final DBPFTGI FSH_MISC;
 
     /** FSH file: Base and Overlay Lot Textures <p> (0x7ab50e44, 0x0986135e, -1) */
     public static final DBPFTGI FSH_BASE_OVERLAY;
@@ -316,6 +320,9 @@ public class DBPFTGI {
     /** FSH file: Textures <p> (0x7ab50e44, -1, -1) */
     public static final DBPFTGI FSH;
     
+    /** S3D file: Maxis Models <p> (0x5ad0e817, 0xbadb57f1, -1) */
+    public static final DBPFTGI S3D_MAXIS;
+
     /** S3D file: Models <p> (0x5ad0e817, -1, -1) */
     public static final DBPFTGI S3D;
 
@@ -368,6 +375,7 @@ public class DBPFTGI {
         BLANKTGI                = new Mask(0L, 0L, 0L, "-");
         DIRECTORY               = new Mask(0xe86b1eefL, 0xe86b1eefL, 0x286b1f03L, "DIR");
         LD                      = new Mask(0x6be74c60L, 0x6be74c60L, -1L, "LD");
+        S3D_MAXIS                = new Mask(0x5ad0e817L, 0xbadb57f1L, -1L, "S3D");
         S3D                     = new Mask(0x5ad0e817L, -1L, -1L, "S3D");
         COHORT                  = new Mask(0x05342861L, -1L, -1L, "COHORT");
         
@@ -385,7 +393,8 @@ public class DBPFTGI {
         EXEMPLAR_T21            = new Mask(0x6534284aL, 0x89ac5643L, -1L, "EXEMPLAR (T21)");
         EXEMPLAR                = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
         
-        FSH_TRANSIT             = new Mask(0x7ab50e44L, 0x1abe787dL, -1L, "FSH (Transit Texture)");
+        FSH_MISC                = new Mask(0x7ab50e44L, 0x1abe787dL, -1L, "FSH (Misc)");
+        FSH_TRANSIT             = FSH_MISC;
         FSH_BASE_OVERLAY        = new Mask(0x7ab50e44L, 0x0986135eL, -1L, "FSH (Base/Overlay Texture)");
         FSH_SHADOW              = new Mask(0x7ab50e44L, 0x2BC2759aL, -1L, "FSH (Shadow Mask)");
         FSH_ANIM_PROPS          = new Mask(0x7ab50e44L, 0x2a2458f9L, -1L, "FSH (Animation Sprites (Props))");

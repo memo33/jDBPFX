@@ -1,6 +1,7 @@
 package jdpbfx.util;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Comparator;
 
 /**
@@ -11,6 +12,21 @@ import java.util.Comparator;
  * @author memo
  */
 public final class SimCityFileComparator implements Comparator<File> {
+    
+    public static final FileFilter DBPF_FILE_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory())
+                return true;
+            else {
+                String name = f.getName().toLowerCase();
+                return name.endsWith(".dat")
+                        || name.endsWith(".sc4lot")
+                        || name.endsWith(".sc4model")
+                        || name.endsWith(".sc4desc");
+            }
+        }
+    };
     
     private final File appDir, appPluginDir, userPluginDir;
     private final FileSystem fileSystem;
