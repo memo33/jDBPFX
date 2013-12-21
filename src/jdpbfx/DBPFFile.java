@@ -1114,7 +1114,7 @@ public class DBPFFile {
                     if (src == null) {
                         DBPFUtil.LOGGER.log(Level.SEVERE, "[DBPFFile.DBPFEntry] " +
                                 "Cannot read data of TGI: " + entry.getTGI());
-                        return;
+                        throw new NullPointerException("Data channel was null for TGI: " + entry.getTGI());
                     } // else
             
                     boolean tooShort = false; // for compression
