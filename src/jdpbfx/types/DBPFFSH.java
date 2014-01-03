@@ -12,6 +12,7 @@ import jdpbfx.util.DBPFUtil;
 
 /**
  * @author Jon
+ * @author memo
  */
 public class DBPFFSH extends DBPFType {
 
@@ -231,6 +232,8 @@ public class DBPFFSH extends DBPFType {
                         }
                     }
                 }
+                // mipmap offset fix
+                offset += 8;
             } else if((entry.type & 0x7F) == 0x61) { //DXT3
                 int left = 0, top = 0;
                 for(;; offset += 16) {
@@ -291,6 +294,8 @@ public class DBPFFSH extends DBPFType {
                         }
                     }
                 }
+                // mipmap offset fix
+                offset += 16;
             } else if((entry.type & 0x7F) == 0x7D) { //ARGB 32bit 8x8x8x8
                 dataEnd = offset + (width * height * 4);
                 int[] pixels = new int[(dataEnd-offset)/4];
