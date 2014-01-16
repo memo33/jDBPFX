@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -39,6 +40,7 @@ import jdpbfx.types.DBPFS3D;
 import jdpbfx.types.DBPFSC4Path;
 import jdpbfx.util.DBPFPackager;
 import jdpbfx.util.DBPFUtil;
+import jdpbfx.util.TGIFilter;
 
 /**
  * The DBPFFile class encapsulates the header data and entry list as read from
@@ -252,6 +254,60 @@ public class DBPFFile {
      */
     public Collection<DirectDBPFEntry> getEntries() {
         return Collections.unmodifiableCollection(this.entryMap.values());
+    }
+
+    /**
+     * Returns an {@link Iterator} over the {@code Collection} returned by
+     * {@link #getEntries()} that iterates only over those entries that have
+     * TGIs that are accepted by the given {@link TGIFilter}.
+     * 
+     * @param filter
+     *            the {@code TGIFilter} used for filtering the entries.
+     * @return an {@code Iterator} that iterates the entries accepted by the
+     *         filter.
+     * 
+     * @see #getEntries()
+     */
+    public Iterable<DirectDBPFEntry> getEntries(final TGIFilter filter) {
+        return new Iterable<DBPFFile.DirectDBPFEntry>() {
+            @Override
+            public Iterator<DirectDBPFEntry> iterator() {
+                return new Iterator<DBPFFile.DirectDBPFEntry>() {
+                    
+                    DirectDBPFEntry next = findNext();
+                    
+                    Iterator<DirectDBPFEntry> delegate = DBPFFile.this.getEntries().iterator();
+                    
+                    private DirectDBPFEntry findNext() {
+                        while (delegate.hasNext()) {
+                            DirectDBPFEntry newNext = delegate.next();
+                            if (filter.accepts(newNext.getTGI())) {
+                                return newNext;
+                            }
+                        }
+                        // else no match found
+                        return null;
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        return next != null;
+                    }
+
+                    @Override
+                    public DirectDBPFEntry next() {
+                        DirectDBPFEntry result = this.next;
+                        this.next = findNext();
+                        return result;
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException("Iterator does not support removal of entries");
+                    }
+                };
+            }
+        };
     }
     
     /**
