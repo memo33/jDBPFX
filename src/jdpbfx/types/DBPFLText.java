@@ -12,7 +12,7 @@ public class DBPFLText extends AbstractTextType {
 
     /**
      * Constructor.
-     * 
+     *
      * @param data
      *          the uncompressed byte data of the entry.
      * @param tgi

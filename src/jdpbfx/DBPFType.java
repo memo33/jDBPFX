@@ -22,11 +22,11 @@ import jdpbfx.util.DBPFUtil;
 /**
  * An autonomous abstract type containing data representing a DBPF subfile entry that
  * may be written to a file.
- * 
+ *
  * <dl><dt><b>Specified by:</b>
  * <dd>{@link DBPFEntry}.
  * </dl>
- * 
+ *
  * @author Jon
  * @author memo
  */
@@ -56,7 +56,7 @@ public abstract class DBPFType extends DBPFEntry {
      * <p>
      * {@link DBPFRaw} types will return the data exactly as stored, other types
      * will return the data compressed if {@link #isCompressed()} returns true.
-     * 
+     *
      * @return the data.
      */
     @Override
@@ -71,19 +71,19 @@ public abstract class DBPFType extends DBPFEntry {
         }
         return data;
     }
-    
+
     /**
      * By default, creates a {@code ReadableByteChannel} from the byte array
      * returned by {@link #createData()} (which is against the intents of this
      * method - see super method for details).
-     * 
+     *
      * @see DBPFEntry#createDataChannel()
      */
     @Override
     public ReadableByteChannel createDataChannel() {
         return Channels.newChannel(new ByteArrayInputStream(this.createData()));
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -100,7 +100,7 @@ public abstract class DBPFType extends DBPFEntry {
 
     /**
      * By default, returns the {@link #toString()} value of this type.
-     * 
+     *
      * @return the detailed String representation.
      */
     public String toDetailString() {
@@ -109,21 +109,21 @@ public abstract class DBPFType extends DBPFEntry {
 
     /**
      * Returns the actual {@link DBPFType.Type} of this type.
-     * 
+     *
      * @return the Type.
      */
     public abstract Type getType();
-    
+
 //    /**
 //     * Returns the corresponding generic TGI mask constant matching this Type.
-//     * 
+//     *
 //     * @return the TGI mask.
 //     */
 //    public abstract DBPFTGI getTGIMask();
 
     /**
      * Returns the raw byte data of this type.
-     * 
+     *
      * @return the raw byte data.
      */
     public abstract byte[] getRawData();
@@ -159,24 +159,24 @@ public abstract class DBPFType extends DBPFEntry {
 
     /**
      * Returns the size of this type when decompressed.
-     * 
+     *
      * @return the decompressed size.
      */
     public long getDecompressedSize() {
         return decompressedSize;
     }
-    
+
     /**
      * An Enumeration of known file types that can be returned by
      * {@link DBPFType#getType()} of a {@code DBPFType}.
-     * 
+     *
      * @author memo
      */
     public static enum Type {
         /*
          * Order constraints: WAV comes before LTEXT because
          * WAV-TGI matches LTEXT-TGI; RAW comes last because
-         * any TGI matches NULLTGI. 
+         * any TGI matches NULLTGI.
          */
         EXEMPLAR(DBPFTGI.EXEMPLAR) {
             @Override
@@ -288,30 +288,30 @@ public abstract class DBPFType extends DBPFEntry {
                 return new DBPFRaw(data, tgi, packager.isCompressed(), packager.getDecompressedSize());
             }
         };
-        
+
         private final DBPFTGI tgiMask;
-        
+
         private Type(DBPFTGI tgiMask) {
             this.tgiMask = tgiMask;
         }
-        
+
         /**
          * Returns the corresponding generic TGI mask constant matching this Type.
-         * 
+         *
          * @return the TGI mask.
          */
         public DBPFTGI getTGIMask() {
             return this.tgiMask;
         }
-        
+
         /**
          * Creates a {@code DBPFType} from the byte data of an entry.
-         * 
+         *
          * @param data the byte data of an entry as read from a file.
          *          May be compressed or uncompressed.
          * @param tgi the TGI of the entry.
          * @return a new {@code DBPFType} of this {@code Type} or
-         *          {@code null} if this {@code Type} is not supported. 
+         *          {@code null} if this {@code Type} is not supported.
          */
         abstract DBPFType createType(byte[] data, DBPFTGI tgi);
     }

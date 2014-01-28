@@ -25,7 +25,7 @@ public class DBPFUtil {
      * The logger object logging events
      */
     public static final Logger LOGGER = Logger.getLogger(LOGGER_NAME);
-    
+
     /**
      * Magic number for DBPF
      */
@@ -112,7 +112,7 @@ public class DBPFUtil {
 
     /**
      * Converts a hex value given by a long to a float value.<br>
-     * 
+     *
      * @param hexValue
      *            The hex value
      * @return The float
@@ -123,7 +123,7 @@ public class DBPFUtil {
 
     /**
      * Convert a float value to a hex value given as a long.<br>
-     * 
+     *
      * @param floatValue
      *            The float value
      * @return The hex value

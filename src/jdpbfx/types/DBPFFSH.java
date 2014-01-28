@@ -79,7 +79,7 @@ public class DBPFFSH extends DBPFType {
     public long getNumEntries() {
         return numEntries;
     }
-    
+
     public int getNumMips(int index) {
         if(index < numEntries)
             return imageIndex.get(index).mipCount;
@@ -106,7 +106,7 @@ public class DBPFFSH extends DBPFType {
         }
         return null;
     }
-    
+
     public List<BufferedImage> getImages(int index) {
         if(index < numEntries) {
             if(imageIndex.get(index).images.isEmpty())
@@ -114,7 +114,7 @@ public class DBPFFSH extends DBPFType {
 
             return new ArrayList<BufferedImage>(imageIndex.get(index).images);
         }
-        
+
         return null;
     }
 
@@ -137,7 +137,7 @@ public class DBPFFSH extends DBPFType {
     private void readImageData(ImageIndex entry, byte[] data) {
         int dataEnd = 0;
         int offset = (int)entry.offset + 0x10;
-        
+
         for(int i=0;i<=entry.mipCount;i++) {
             int width = (entry.width / (1 << i)), height = (entry.height / (1 << i));
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

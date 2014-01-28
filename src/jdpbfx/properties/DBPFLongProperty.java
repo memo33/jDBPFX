@@ -48,7 +48,7 @@ public class DBPFLongProperty extends DBPFProperty {
     public Long getValue() {
         return (Long)super.getValue();
     }
-    
+
     @Override
     protected void valueToRaw(byte[] data, int offset) {
         if(getCount() == -1) {

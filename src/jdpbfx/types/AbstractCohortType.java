@@ -21,7 +21,7 @@ abstract class AbstractCohortType extends DBPFType {
     short format;
     boolean modified;
     TreeMap<Long, DBPFProperty> propertyMap;
-    
+
     private AbstractCohortType(String magicNumber, DBPFTGI tgi) {
         super(tgi);
         if (!magicNumber.equals(DBPFUtil.MAGICNUMBER_EQZ)
@@ -34,7 +34,7 @@ abstract class AbstractCohortType extends DBPFType {
 
     AbstractCohortType(String magicNumber, byte[] data, DBPFTGI tgi, boolean compressed) {
         this(magicNumber, tgi);
-        
+
         this.rawData = data;
         this.compressed = compressed;
         this.modified = false;
@@ -59,10 +59,10 @@ abstract class AbstractCohortType extends DBPFType {
             }
         }
     }
-    
+
     AbstractCohortType(String magicNumber, DBPFTGI tgi, boolean compressed, short format, DBPFTGI parentCohortTGI) {
         this(magicNumber, parentCohortTGI);
-        
+
         this.parentCohortTGI = parentCohortTGI;
         this.modified = true;
         this.rawData = null;
@@ -116,7 +116,7 @@ abstract class AbstractCohortType extends DBPFType {
      * Add a property to this exemplar/cohort.
      * This method returns false if the property is null or
      * if another property with the same id already exists.
-     * 
+     *
      * @param prop
      *            the property to add
      *
@@ -268,7 +268,7 @@ abstract class AbstractCohortType extends DBPFType {
             return data;
         }
     }
-    
+
     @Override
     public long getDecompressedSize() {
         return getRawData().length;
@@ -418,5 +418,5 @@ abstract class AbstractCohortType extends DBPFType {
         byte[] data = new byte[sb.length()];
         DBPFUtil.setChars(sb.toString(), data, 0);
         return data;
-    }    
+    }
 }

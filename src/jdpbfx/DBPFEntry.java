@@ -32,7 +32,7 @@ import jdpbfx.DBPFFile.DirectDBPFEntry;
  * or its data may be lost. The behaviour in this case is unspecified and should
  * be avoided (see also {@link DBPFFile.Reader#readCached(java.io.File)
  * DBPFFile.Reader.readCached}).
- * 
+ *
  * <dt><b>{@link DBPFType}</b>
  * <dd>
  * A {@code DBPFType} usually holds its data itself and can exist without an
@@ -44,7 +44,7 @@ import jdpbfx.DBPFFile.DirectDBPFEntry;
  * {@link DirectDBPFEntry#createType() createType} methods of a {@code
  * DirectDBPFEntry}, whenever working with the actual type of the entry is
  * desired.
- * 
+ *
  * <dt><b>Custom Subclasses</b>
  * <dd>
  * The only method that needs to be implemented is the {@link #createDataChannel} method,
@@ -53,7 +53,7 @@ import jdpbfx.DBPFFile.DirectDBPFEntry;
  * especially suitable for large raw data entries. It would be impractical to convert
  * these to byte arrays, in between.
  * </dl>
- * 
+ *
  * @author memo
  *
  * @see DBPFType
@@ -61,35 +61,35 @@ import jdpbfx.DBPFFile.DirectDBPFEntry;
  * @see DBPFFile.Reader#readCached(java.io.File)
  */
 public abstract class DBPFEntry {
-    
+
     /**
      * The TGI of this entry.
      */
     private DBPFTGI tgi;
-    
+
     /**
      * Constructor. If the passed TGI is {@code null}, the TGI will be set to
      * {@link DBPFTGI#NULLTGI}.
-     * 
+     *
      * @param tgi the TGI of this entry.
      */
     protected DBPFEntry(DBPFTGI tgi) {
         this.tgi = tgi != null ? tgi : DBPFTGI.NULLTGI;
     }
-    
+
     /**
      * Returns the TGI of this entry.
-     * 
+     *
      * @return the TGI of this entry.
      */
     public DBPFTGI getTGI() {
         return this.tgi;
     }
-    
+
     /**
      * Sets the TGI of this entry to the specified TGI. The {@code tgi} must
      * not be {@code null}.
-     * 
+     *
      * @param tgi the new TGI.
      * @return TRUE if the TGI was successfully set,
      *         FALSE if {@code tgi} was {@code null} or otherwise (as specified
@@ -106,21 +106,21 @@ public abstract class DBPFEntry {
 
     /**
      * Creates an array with the data from this entry.
-     * 
+     *
      * Optional operation. The default implementation of this method throws an
      * {@link UnsupportedOperationException}, but both {@link DBPFFile.DirectDBPFEntry}
      * and subclasses of {@link DBPFType} implement it. It is optional in order to
      * simplify custom implementations of {@code DBPFEntry}.
-     * 
+     *
      * @return the data array,
      *      or {@code null} in case an IO issue occured.
-     *      
+     *
      * @see #createDataChannel()
      */
     public byte[] createData() {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      * Creates a {@link ReadableByteChannel} that can be used to read the data
      * of this entry in buffered mode. This method is an alternative to the
@@ -131,7 +131,7 @@ public abstract class DBPFEntry {
      * this method instead of {@code createData} in order to avoid the
      * aforementioned problem. The {@code createData} method is mainly
      * for convenience.
-     * 
+     *
      * @return the channel providing the data of this entry,
      *      or {@code null} in case an IO issue occured.
      */

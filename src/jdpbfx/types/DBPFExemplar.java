@@ -12,7 +12,7 @@ public class DBPFExemplar extends AbstractCohortType {
 
     /**
      * Constructor.
-     * 
+     *
      * @param data
      *          the uncompressed byte data of the entry.
      * @param tgi
@@ -24,15 +24,15 @@ public class DBPFExemplar extends AbstractCohortType {
     public DBPFExemplar(byte[] data, DBPFTGI tgi, boolean compressed) {
         super(DBPFUtil.MAGICNUMBER_EQZ, data, tgi, compressed);
     }
-    
+
     public DBPFExemplar(DBPFTGI tgi, boolean compressed, short format, DBPFTGI parentCohortTGI) {
         super(DBPFUtil.MAGICNUMBER_EQZ, tgi, compressed, format, parentCohortTGI);
     }
-    
+
     public DBPFExemplar(DBPFTGI tgi, boolean compressed, short format) {
         this(tgi, compressed, format, DBPFTGI.BLANKTGI);
     }
-    
+
     /*
     public DBPFExemplar(DBPFCohort cohort) {
         compressed = cohort.isCompressed();

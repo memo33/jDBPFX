@@ -16,7 +16,7 @@ import jdpbfx.util.DBPFUtil;
  * <p>
  * Masks for the common file types are declared as constants in this class and
  * may be used with this method.
- * 
+ *
  * @author jondor
  * @author memo
  */
@@ -25,7 +25,7 @@ public class DBPFTGI {
     private final long type;
     private final long group;
     private final long instance;
-    
+
     /**
      * Static factory method that returns a {@code DBPFTGI} object. Components
      * are stored as longs to avoid sign problems. -1 can be used as {@code null}
@@ -34,7 +34,7 @@ public class DBPFTGI {
      * Whether two TGIs {@code tgi1} and {@code tgi2} returned by this method that
      * satisfy {@code tgi1.equals(tgi2)} will also satisfy {@code tgi1 == tgi2}
      * is unspecified.
-     * 
+     *
      * @param type 32-bit type identifier.
      * @param group 32-bit group identifier.
      * @param instance 32-bit instance identifier.
@@ -47,7 +47,7 @@ public class DBPFTGI {
     /**
      * Creates a TGI. Components are stored as longs to avoid sign problems.
      * -1 can be used as {@code null} value.
-     * 
+     *
      * @param type 32-bit type identifier.
      * @param group 32-bit group identifier.
      * @param instance 32-bit instance identifier.
@@ -135,9 +135,9 @@ public class DBPFTGI {
 
     /**
      * Compares two TGI objects for exact equality between their components.
-     * 
+     *
      * @param obj The TGI to compare with this one.
-     * 
+     *
      * @return True if both TGIs have identical components, false if not or if
      *         obj is not a TGI.
      */
@@ -204,7 +204,7 @@ public class DBPFTGI {
      * will be used.
      *
      * @param modifier The TGI to use to modify this one
-     * 
+     *
      * @return a DBPFTGI object with the modified fields.
      */
     public DBPFTGI modifyTGI(DBPFTGI modifier) {
@@ -226,7 +226,7 @@ public class DBPFTGI {
      * @param t The type id to change to or -1 as a mask
      * @param g The group id to change to or -1 as a mask
      * @param i The instance id to change to or -1 as a mask
-     * 
+     *
      * @return a DBPFTGI object with the modified fields.
      */
     public DBPFTGI modifyTGI(long t, long g, long i) {
@@ -249,37 +249,37 @@ public class DBPFTGI {
 
     /** Exemplar file: street network <p> (0x6534284a, 0xa92a02ea, -1) */
     public static final DBPFTGI EXEMPLAR_STREET;
-    
+
     /** Exemplar file: one-way road network <p> (0x6534284a, 0xcbe084cb, -1) */
     public static final DBPFTGI EXEMPLAR_ONEWAYROAD;
-    
+
     /** Exemplar file: avenue network <p> (0x6534284a, 0xcb730fac, -1) */
     public static final DBPFTGI EXEMPLAR_AVENUE;
-    
+
     /** Exemplar file: elevated highway network <p> (0x6534284a, 0xa8434037, -1) */
     public static final DBPFTGI EXEMPLAR_HIGHWAY;
-    
+
     /** Exemplar file: ground highway network <p> (0x6534284a, 0xebe084d1, -1) */
     public static final DBPFTGI EXEMPLAR_GROUNDHIGHWAY;
-    
+
     /** Exemplar file: dirtroad/ANT/RHW network <p> (0x6534284a, 0x6be08658, -1) */
     public static final DBPFTGI EXEMPLAR_DIRTROAD;
-    
+
     /** Exemplar file: rail network <p> (0x6534284a, 0xe8347989, -1) */
     public static final DBPFTGI EXEMPLAR_RAIL;
-    
+
     /** Exemplar file: lightrail network <p> (0x6534284a, 0x2b79dffb, -1) */
     public static final DBPFTGI EXEMPLAR_LIGHTRAIL;
-    
+
     /** Exemplar file: monorail network <p> (0x6534284a, 0xebe084c2, -1) */
     public static final DBPFTGI EXEMPLAR_MONORAIL;
-    
+
     /** Exemplar file: power poles network <p> (0x6534284a, 0x088e1962, -1) */
     public static final DBPFTGI EXEMPLAR_POWERPOLE;
-    
+
     /** Exemplar file: Type 21 <p> (0x6534284a, 0x89AC5643, -1) */
     public static final DBPFTGI EXEMPLAR_T21;
-    
+
     /** Exemplar file: LotInfo, LotConfig <p> (0x6534284a, -1, -1) */
     public static final DBPFTGI EXEMPLAR;
 
@@ -295,7 +295,7 @@ public class DBPFTGI {
     /** FSH file: Transit Textures/Buildings/Bridges/Misc <p> (0x7ab50e44, 0x1abe787d, -1) */
     @Deprecated
     public static final DBPFTGI FSH_TRANSIT;
-    
+
     /** FSH file: Transit Textures/Buildings/Bridges/Misc <p> (0x7ab50e44, 0x1abe787d, -1) */
     public static final DBPFTGI FSH_MISC;
 
@@ -319,7 +319,7 @@ public class DBPFTGI {
 
     /** FSH file: Textures <p> (0x7ab50e44, -1, -1) */
     public static final DBPFTGI FSH;
-    
+
     /** S3D file: Maxis Models <p> (0x5ad0e817, 0xbadb57f1, -1) */
     public static final DBPFTGI S3D_MAXIS;
 
@@ -369,7 +369,7 @@ public class DBPFTGI {
         /*
          * Masks need to be ordered "bottom-up", that is, specialized entries
          * need to be inserted first, more general ones later.
-         * 
+         *
          * @see DBPFTGI#getLabel()
          */
         BLANKTGI                = new Mask(0L, 0L, 0L, "-");
@@ -378,7 +378,7 @@ public class DBPFTGI {
         S3D_MAXIS                = new Mask(0x5ad0e817L, 0xbadb57f1L, -1L, "S3D");
         S3D                     = new Mask(0x5ad0e817L, -1L, -1L, "S3D");
         COHORT                  = new Mask(0x05342861L, -1L, -1L, "COHORT");
-        
+
         EXEMPLAR_ROAD           = new Mask(0x6534284aL, 0x2821ed93L, -1L, "EXEMPLAR (Road)");
         EXEMPLAR_STREET         = new Mask(0x6534284aL, 0xa92a02eaL, -1L, "EXEMPLAR (Street)");
         EXEMPLAR_ONEWAYROAD     = new Mask(0x6534284aL, 0xcbe084cbL, -1L, "EXEMPLAR (One-Way Road)");
@@ -392,7 +392,7 @@ public class DBPFTGI {
         EXEMPLAR_POWERPOLE      = new Mask(0x6534284aL, 0x088e1962L, -1L, "EXEMPLAR (Power Pole)");
         EXEMPLAR_T21            = new Mask(0x6534284aL, 0x89ac5643L, -1L, "EXEMPLAR (T21)");
         EXEMPLAR                = new Mask(0x6534284aL, -1L, -1L, "EXEMPLAR");
-        
+
         FSH_MISC                = new Mask(0x7ab50e44L, 0x1abe787dL, -1L, "FSH (Misc)");
         FSH_TRANSIT             = FSH_MISC;
         FSH_BASE_OVERLAY        = new Mask(0x7ab50e44L, 0x0986135eL, -1L, "FSH (Base/Overlay Texture)");
@@ -402,11 +402,11 @@ public class DBPFTGI {
         FSH_TERRAIN_FOUNDATION  = new Mask(0x7ab50e44L, 0x891b0e1aL, -1L, "FSH (Terrain/Foundation)");
         FSH_UI                  = new Mask(0x7ab50e44L, 0x46a006b0L, -1L, "FSH (UI Image)");
         FSH                     = new Mask(0x7ab50e44L, -1L, -1L, "FSH");
-        
+
         SC4PATH_2D              = new Mask(0x296678f7L, 0x69668828L, -1L, "SC4PATH (2D)");
         SC4PATH_3D              = new Mask(0x296678f7L, 0xa966883fL, -1L, "SC4PATH (3D)");
         SC4PATH                 = new Mask(0x296678f7L, -1L, -1L, "SC4PATH");
-        
+
         PNG_ICON                = new Mask(0x856ddbacL, 0x6a386d26L, -1L, "PNG (Icon)");
         PNG                     = new Mask(0x856ddbacL, -1L, -1L, "PNG");
         LUA                     = new Mask(0xca63e2a3L, 0x4a5e8ef6L, -1L, "LUA");
@@ -416,14 +416,14 @@ public class DBPFTGI {
         INI_FONT                = new Mask(0L, 0x4a87bfe8L, 0x2a87bffcL, "INI (Font Table)");
         INI_NETWORK             = new Mask(0L, 0x8a5971c5L, 0x8a5993b9L, "INI (Networks)");
         INI                     = new Mask(0L, 0x8a5971c5L, -1L, "INI");
-        
+
         RUL                     = new Mask(0x0a5bcf4bL, 0xaa5bcf57L, -1L, "RUL");
         EFFDIR                  = new Mask(0xea5118b0L, -1L, -1L, "EFFDIR");
         NULLTGI                 = new Mask(-1L, -1L, -1L, "UNKNOWN"); // any TGI matches this last one
     }
 
     private static class Mask extends DBPFTGI {
-        
+
         private static final Queue<Mask> values = new ArrayDeque<Mask>(); // for ordered iteration
 
         private final String label;

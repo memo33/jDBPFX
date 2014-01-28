@@ -61,7 +61,7 @@ import jdpbfx.util.TGIFilter;
  * To obtain the entry list/index table of a DBPF file, the method
  * {@link #getEntries()} can be used. Its entries are of type
  * {@link DirectDBPFEntry}.
- * 
+ *
  * <dl><dt>
  * <b>Warning:</b>
  * <dd>
@@ -107,13 +107,13 @@ import jdpbfx.util.TGIFilter;
  * created in the System's temporary directory, given by
  * {@code System.getProperty("java.io.tmpdir")}. You may occasionally want to
  * check this directory for unused remaining files.
- * 
+ *
  * <dt>
  * <b>Warning:</b>
  * <dd>None of these Classes are Thread-safe. It is advisable to handle multi-threaded
  * setups with extra caution. Consider using a single event-dispatching thread.
  * </dl>
- * 
+ *
  * @author jondor
  * @author memo
  */
@@ -123,7 +123,7 @@ public class DBPFFile {
      * Holds the header data of this DBPF file.
      */
     public final Header header;
-    
+
     private LinkedHashMap<Long, DirectDBPFEntry> entryMap;
     private HashMap<DBPFTGI, Long> tgiMap;
     private File file;
@@ -184,7 +184,7 @@ public class DBPFFile {
      * IndexType: <code>indexType</code>, IndexEntryCount:
      * <code>indexEntryCount</code>, IndexOffsetLocation:
      * <code>indexOffsetLocation</code>, IndexSize: <code>indexSize</code><br/>
-     * 
+     *
      * @return A String with the above information.
      */
     @Override
@@ -217,7 +217,7 @@ public class DBPFFile {
 
     /**
      * Returns the {@link File} associated with this DBPFFile.
-     * 
+     *
      * @return the file.
      */
     public File getFile() {
@@ -226,7 +226,7 @@ public class DBPFFile {
 
     /**
      * Returns the file name associated with this DBPFFile.
-     * 
+     *
      * @return the file name.
      */
     public String getName() {
@@ -249,7 +249,7 @@ public class DBPFFile {
     /**
      * Returns an unmodifiable {@link Collection} of all entries contained in this
      * file, preserving their order within the file.
-     * 
+     *
      * @return an ordered collection of the entries stored in this file.
      */
     public Collection<DirectDBPFEntry> getEntries() {
@@ -260,12 +260,12 @@ public class DBPFFile {
      * Returns an {@link Iterator} over the {@code Collection} returned by
      * {@link #getEntries()} that iterates only over those entries that have
      * TGIs that are accepted by the given {@link TGIFilter}.
-     * 
+     *
      * @param filter
      *            the {@code TGIFilter} used for filtering the entries.
      * @return an {@code Iterator} that iterates the entries accepted by the
      *         filter.
-     * 
+     *
      * @see #getEntries()
      */
     public Iterable<DirectDBPFEntry> getEntries(final TGIFilter filter) {
@@ -273,11 +273,11 @@ public class DBPFFile {
             @Override
             public Iterator<DirectDBPFEntry> iterator() {
                 return new Iterator<DBPFFile.DirectDBPFEntry>() {
-                    
+
                     DirectDBPFEntry next = findNext();
-                    
+
                     Iterator<DirectDBPFEntry> delegate = DBPFFile.this.getEntries().iterator();
-                    
+
                     private DirectDBPFEntry findNext() {
                         while (delegate.hasNext()) {
                             DirectDBPFEntry newNext = delegate.next();
@@ -309,11 +309,11 @@ public class DBPFFile {
             }
         };
     }
-    
+
     /**
-     * Returns the entry at a particular index within this file.  
-     * 
-     * @param index the index. 
+     * Returns the entry at a particular index within this file.
+     *
+     * @param index the index.
      * @return the entry at the specified index within this file,
      *      or {@code null} if the index is larger than the number of
      *      entries contained.
@@ -321,7 +321,7 @@ public class DBPFFile {
     public DirectDBPFEntry getEntry(long index) {
         return entryMap.get(index);
     }
-    
+
     /**
      * Returns an entry of a particular TGI from this file.
      * <p>
@@ -329,18 +329,18 @@ public class DBPFFile {
      * unspecified which one of them is returned. It is advisable to use
      * {@link #getEntry(long)} instead. The method {@link #countTGI(DBPFTGI)}
      * may be used to determine the number of occurrences of the TGI.
-     * 
+     *
      * @param tgi the TGI.
      * @return an entry of the specified TGI, or {@code null} if there
      *      is no such TGI within this file.
-     *      
+     *
      * @see #getEntry(long)
      * @see #getEntries()
      */
     public DirectDBPFEntry getEntry(DBPFTGI tgi) {
         return this.getEntry(tgiMap.get(tgi));
     }
-    
+
     /**
      * Returns a count of entries matching the specified TGI mask. TGIs may
      * include null (-1) components that will be masked against.
@@ -362,10 +362,10 @@ public class DBPFFile {
         }
         return count;
     }
-    
+
     /**
      * Specifies whether this file was read in mapped (or cached) mode.
-     * 
+     *
      * @return TRUE if this DBPF file was read via {@code readMapped} or
      *      {@code readCached}, and the method {@link #releaseMapping()} has not
      *      been invoked yet,
@@ -374,10 +374,10 @@ public class DBPFFile {
     public boolean isMapped() {
         return this.mappedByteBuffer != null;
     }
-    
+
     /**
      * Specifies whether this file was read in cached mode.
-     * 
+     *
      * @return TRUE if the temporary created file and the mapping both
      *      (still) exist,
      *      FALSE otherwise.
@@ -386,7 +386,7 @@ public class DBPFFile {
         return this.tmpFile != null && this.tmpFile.exists()
                 && this.isMapped();
     }
-    
+
     /**
      * Attempts to release the {@link MappedByteBuffer} associated with
      * the mapping of this file.
@@ -396,7 +396,7 @@ public class DBPFFile {
      * <p>
      * Calling this method on a file that is not mapped has no effect.
      * Calling this method more than once has no effect.
-     * 
+     *
      * @see DBPFFile
      * @see Reader#readMapped(File)
      */
@@ -423,7 +423,7 @@ public class DBPFFile {
     /**
      * Encapsulates the elements that are specific to the Header of the
      * DBPF file.
-     * 
+     *
      * @author memo
      */
     public class Header {
@@ -431,7 +431,7 @@ public class DBPFFile {
          * Header size of the DBPF file (96 bytes).
          */
         public static final long HEADER_SIZE = 0x60; // =96dec
-        
+
         private long majorVersion;
         private long minorVersion;
         private long dateCreated;
@@ -440,65 +440,65 @@ public class DBPFFile {
         private long indexEntryCount;
         private long indexOffsetLocation;
         private long indexSize;
-        
+
         private Header() {};
-        
+
         /**
          * @return The major version number.
          */
         public long getMajorVersion() {
             return majorVersion;
         }
-    
+
         /**
          * @return The minor version number.
          */
         public long getMinorVersion() {
             return minorVersion;
         }
-    
+
         /**
          * @return The creation date as read from the file.
          */
         public long getDateCreated() {
             return dateCreated;
         }
-    
+
         /**
          * @return The last modified date as read from the file.
          */
         public long getDateModified() {
             return dateModified;
         }
-    
+
         /**
          * @return The index type specifier.
          */
         public long getIndexType() {
             return indexType;
         }
-    
+
         /**
          * @return The number of entries as read from the file.
          */
         public long getIndexEntryCount() {
             return indexEntryCount;
         }
-    
+
         /**
          * @return The byte offset of the index.
          */
         public long getIndexOffsetLocation() {
             return indexOffsetLocation;
         }
-    
+
         /**
          * @return The byte size of the index.
          */
         public long getIndexSize() {
             return indexSize;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -529,7 +529,7 @@ public class DBPFFile {
      * @see DBPFFile
      */
     public static class Reader {
-        
+
         private Reader() {};
 
         private static final String TMP_DIR_NAME = "jdbpfx_tmp";
@@ -538,7 +538,7 @@ public class DBPFFile {
         private static final String JVM_ID;
         private static final int MAX_POLL_TIME = 10000;
         private static final int HEADER_BUFFER_SIZE = 4 * 11;
-        
+
         static {
             Random rand = new Random();
             JVM_ID = String.format("%08X", rand.nextInt());
@@ -587,17 +587,17 @@ public class DBPFFile {
          * @param filename
          *            The file of the DBPF file to read.
          * @return The DBPF file object.
-         * 
+         *
          * @throws DBPFFileFormatException if {@link #checkFileType} returns {@code false}.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
-         * 
+         *
          * @see #readMapped(File)
          * @see #readCached(File)
          * @see DBPFFile
          */
         public static DBPFFile read(File filename) throws DBPFFileFormatException, FileNotFoundException, IOException {
-            
+
             RandomAccessFile raf = null;
             try {
                 raf  = new RandomAccessFile(filename, "r");
@@ -653,7 +653,7 @@ public class DBPFFile {
                 closeAll(raf);
             }
         }
-        
+
         /**
          * Reads a DBPF file and maps the file from disk to memory.
          * <p>
@@ -667,15 +667,15 @@ public class DBPFFile {
          * before discarding the DBPFFile.
          * <p>
          * <b>Important:</b> Observe the annotations in {@link DBPFFile}
-         * 
+         *
          * @param filename
          *            The file of the DBPF file to read.
          * @return The DBPF file object.
-         * 
+         *
          * @throws DBPFFileFormatException if {@link #checkFileType} returns {@code false}.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
-         * 
+         *
          * @see #read(File)
          * @see #readCached(File)
          * @see DBPFFile
@@ -687,7 +687,7 @@ public class DBPFFile {
 
         private static DBPFFile readMapped(File filename, File mapFile) throws DBPFFileFormatException, FileNotFoundException, IOException {
             DBPFFile dbpfFile = read(filename);
-            
+
             FileInputStream fis = null;
             FileChannel fc = null;
             try {
@@ -715,7 +715,7 @@ public class DBPFFile {
             }
             TMP_DIR.deleteOnExit(); // TODO will only work if dir is empty?
         }
-        
+
         /**
          * Reads a DBPF file, creating a temporary copy of the file, and maps
          * the temporary file from disk to memory.
@@ -732,11 +732,11 @@ public class DBPFFile {
          * before discarding the DBPFFile.
          * <p>
          * <b>Important:</b> Observe the annotations in {@link DBPFFile}
-         * 
+         *
          * @param filename
          *            The file of the DBPF file to read.
          * @return The DBPF file object.
-         * 
+         *
          * @throws DBPFFileFormatException if {@link #checkFileType} returns {@code false}.
          * @throws FileNotFoundException if the file does not exist or is inaccessible.
          * @throws IOException in case of an IO issue.
@@ -748,7 +748,7 @@ public class DBPFFile {
          */
         public static DBPFFile readCached(File filename) throws DBPFFileFormatException, FileNotFoundException, IOException {
             initTmpDir();
-            
+
             File tmpFile = new File(TMP_DIR, String.format("%s_%08X_%X_%s",
                     filename.getName(), filename.getAbsolutePath().hashCode(),
                     filename.lastModified(), JVM_ID));
@@ -797,7 +797,7 @@ public class DBPFFile {
                 DBPFUtil.LOGGER.log(Level.INFO, "[DBPFFile.Reader] File {0} is already cached", filename.getName());
             }
             tmpFile.deleteOnExit(); // okay since every JVM creates its own copy currently
-            
+
             // tmp file exists now
             DBPFFile dbpfFile = readMapped(filename, tmpFile);
             assert dbpfFile != null;
@@ -806,7 +806,7 @@ public class DBPFFile {
             }
             return dbpfFile;
         }
-        
+
         private static void closeAll(Closeable... closeables) throws IOException {
             IOException cause = null;
             for (Closeable c : closeables) {
@@ -825,14 +825,14 @@ public class DBPFFile {
                 throw new IOException(cause);
             }
         }
-        
+
         private static String readChars(RandomAccessFile raf, int length) throws IOException {
             byte[] b = new byte[length];
             raf.readFully(b);
             return new String(b, Charset.forName("US-ASCII"));
         }
     }
-    
+
     /**
      * Provides static methods for writing a DBPF formatted file to disk.
      * <p>
@@ -847,25 +847,25 @@ public class DBPFFile {
      * @see DBPFFile
      */
     public static class Writer {
-        
+
         private Writer() {};
-                
+
         /**
          * Updates the given DBPF file by the {@code DBPFEntries} in {@code writeList}.
          * <p>
          * Any entry from the dbpfFile that has a TGI (first occurrence only) which is
          * contained in the {@code writeList} will be replaced by the corresponding
          * entry from the writeList. Afterwards, any remaining non-written entry from
-         * the writeList will be appended to the DBPF file. 
+         * the writeList will be appended to the DBPF file.
          * <p>
          * Any Directory file will be skipped, instead an appropriate Directory file
          * will be appended as last entry to the DBPF file.
-         * 
+         *
          * @param dbpfFile a DBPF file. It specifies the destination location and
          *      the creation date.
          * @param writeList a list of entries that have been updated.
          * @return TRUE, if successfully written; FALSE, otherwise.
-         * 
+         *
          * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
@@ -885,16 +885,16 @@ public class DBPFFile {
          * Any entry from the dbpfFile that has a TGI (first occurrence only) which is
          * contained in the {@code writeList} will be replaced by the corresponding
          * entry from the writeList. Afterwards, any remaining non-written entry from
-         * the writeList will be appended to the DBPF file. 
+         * the writeList will be appended to the DBPF file.
          * <p>
          * Any Directory file will be skipped, instead an appropriate Directory file
          * will be appended as last entry to the DBPF file.
-         * 
+         *
          * @param dbpfFile a DBPF file specifying the creation date.
          * @param writeList a list of entries that have been updated.
          * @param newFile the new file location.
          * @return TRUE, if successfully written; FALSE, otherwise.
-         * 
+         *
          * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
@@ -905,7 +905,7 @@ public class DBPFFile {
         public static boolean update(DBPFFile dbpfFile, Collection<? extends DBPFEntry> writeList, File newFile) throws IllegalStateException, FileNotFoundException, IOException {
             return update(dbpfFile, writeList, newFile, false);
         }
-        
+
         /**
          * Takes the {@code DBPFEntries} from the given DBPF file, updates them
          * by the entries in {@code writeList} and writes everything to a new file
@@ -915,18 +915,18 @@ public class DBPFFile {
          * Any entry from the dbpfFile that has a TGI (first occurrence only) which is
          * contained in the {@code writeList} will be replaced by the corresponding
          * entry from the writeList. Afterwards, any remaining non-written entry from
-         * the writeList will be appended to the DBPF file. 
+         * the writeList will be appended to the DBPF file.
          * <p>
          * Any Directory file will be skipped, instead an appropriate Directory file
          * will be appended as last entry to the DBPF file.
-         * 
+         *
          * @param dbpfFile a DBPF file specifying the creation date.
          * @param writeList a list of entries that have been updated.
          * @param newFile the new file location.
          * @param preserveDateCreated TRUE if the creation date is to preserved, FALSE if
          *      the current date is to be used.
          * @return TRUE, if successfully written; FALSE, otherwise.
-         * 
+         *
          * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
@@ -953,7 +953,7 @@ public class DBPFFile {
             updatedWriteList.addAll(updatedEntries.values());
             return write(newFile, updatedWriteList, preserveDateCreated ? dbpfFile.header.getDateCreated() : (System.currentTimeMillis() / 1000));
         }
-        
+
         /**
          * Writes a list of DBPFEntries to a DBPF file, preserving the date created field.
          * <p>
@@ -968,7 +968,7 @@ public class DBPFFile {
          * @param writeList
          *      the list of DBPFEntries to write to file.
          * @return TRUE, if successfully written; FALSE, otherwise.
-         * 
+         *
          * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
@@ -996,7 +996,7 @@ public class DBPFFile {
          * @param newFile
          *      the new file location.
          * @return TRUE, if successfully written; FALSE, otherwise.
-         * 
+         *
          * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
@@ -1019,7 +1019,7 @@ public class DBPFFile {
          * @param writeList
          *      the list of DBPFEntries to write to file.
          * @return TRUE, if successfully written; FALSE, otherwise.
-         * 
+         *
          * @throws IllegalStateException
          *      if the file is not cached and the writeList contains DirectDBPFEntries
          *      and the target file is the same as the source file,
@@ -1047,7 +1047,7 @@ public class DBPFFile {
                 }
             }
         }
-        
+
         private static boolean write(File file, Collection<? extends DBPFEntry> writeList, long dateCreated)
                 throws IllegalStateException, FileNotFoundException, IOException {
             // make sure not to overwrite a file we want to read from
@@ -1059,16 +1059,16 @@ public class DBPFFile {
                 raf = new RandomAccessFile(file, "rw");
                 fc = raf.getChannel();
                 DBPFUtil.LOGGER.log(Level.INFO, "[DBPFFile.Writer] Writing {0}", file.getName());
-                
+
                 new WriteTask(writeList, raf, fc, dateCreated).execute();
             } finally {
                 Reader.closeAll(fc, raf);
             }
             return true;
         }
-        
+
         private static class WriteTask {
-            
+
             private static final int COMPRESSION_HEADER_LENGTH = 9;
             private static final int BUFFER_SIZE = 16 * 1024;
 
@@ -1082,7 +1082,7 @@ public class DBPFFile {
             private final Queue<WriteListData> indexData;
             private final ByteBuffer headerBuf;
             private boolean executed = false;
-            
+
             public WriteTask(Collection<? extends DBPFEntry> writeList, RandomAccessFile raf, FileChannel fc, long dateCreated) throws IOException {
                 this.writeList = writeList;
                 this.raf = raf;
@@ -1094,15 +1094,15 @@ public class DBPFFile {
 
                 dirData = new ArrayDeque<DirListData>();
                 indexData = new ArrayDeque<WriteListData>();
-                headerBuf = ByteBuffer.allocate(COMPRESSION_HEADER_LENGTH); // for header of compressed files 
+                headerBuf = ByteBuffer.allocate(COMPRESSION_HEADER_LENGTH); // for header of compressed files
             }
-            
+
             public void execute() throws IOException {
                 if (executed) {
                     throw new IllegalStateException("Task has already been executed");
                 }
                 executed = true;
-                
+
                 this.writeHeader();
                 // Write rawData, remember offset position and store length
                 // Also remember information about compressed files for directory file
@@ -1118,7 +1118,7 @@ public class DBPFFile {
                     transferData(dir);
                 }
                 flushBuffer();
-                
+
                 writeIndex();
                 updateHeader();
                 fc.force(false);
@@ -1142,11 +1142,11 @@ public class DBPFFile {
                 long indexType = 7;
                 long indexEntryCount = 0;
                 long indexSize = 0;
-            
+
                 // set minimum file size
                 long count = indexOffsetLocation;// + indexSize;
                 raf.setLength(count);
-                
+
                 // Write header
                 buf.put(fileType.getBytes(Charset.forName("US-ASCII")));
                 buf.putInt((int) majorVersion);
@@ -1161,7 +1161,7 @@ public class DBPFFile {
                 buf.position((int) DBPFFile.Header.HEADER_SIZE);
                 flushBuffer();
             }
-            
+
             private void transferData(DBPFEntry entry) throws IOException {
                 ReadableByteChannel src = null;
                 int size = 0;
@@ -1172,7 +1172,7 @@ public class DBPFFile {
                                 "Cannot read data of TGI: " + entry.getTGI());
                         throw new NullPointerException("Data channel was null for TGI: " + entry.getTGI());
                     } // else
-            
+
                     boolean tooShort = false; // for compression
                     int pos = 0;
                     {
@@ -1192,7 +1192,7 @@ public class DBPFFile {
                         pos = headerBuf.remaining();
                         buf.put(headerBuf);
                     }
-            
+
                     // write this entry's data to the target channel using the buffer
                     // pos may already have been increased by length of header
                     for (int count; ; pos += count) {
@@ -1205,7 +1205,7 @@ public class DBPFFile {
                         }
                     }
                     size = pos;
-            
+
                     // create Dir and Index Table Data
                     if (!tooShort && DBPFPackager.isCompressed(headerBuf.array())) {
                         DirListData dataEntry = new DirListData(indexOffsetLocation,
@@ -1255,14 +1255,14 @@ public class DBPFFile {
                 int indexEntryCount = indexData.size();
                 long indexSize = 5 * 4 * indexEntryCount;
                 fc.position(36);
-                buf.putInt((int) indexEntryCount);
+                buf.putInt(indexEntryCount);
                 buf.putInt((int) indexOffsetLocation);
                 buf.putInt((int) indexSize);
                 flushBuffer();
             }
 
         }
-        
+
         private static class WriteListData {
             final long offset;
             final long size;
@@ -1274,7 +1274,7 @@ public class DBPFFile {
                 this.tgi = tgi;
             }
         }
-        
+
         private static class DirListData extends WriteListData {
             final long decompressedSize;
 
@@ -1284,14 +1284,14 @@ public class DBPFFile {
             }
         }
     }
-    
+
     /**
      * An entry within this DBPFFile with a link to its data on disk.
-     * 
+     *
      * <dl><dt><b>Specified by:</b>
      * <dd>{@link DBPFEntry}.
      * </dl>
-     * 
+     *
      * @author memo
      */
     public class DirectDBPFEntry extends DBPFEntry {
@@ -1300,7 +1300,7 @@ public class DBPFFile {
         private final long offset;
         private final long size;
         private final long index;
-        
+
         /**
          * Creates a DBPFEntry.
          *
@@ -1336,7 +1336,7 @@ public class DBPFFile {
 //        /**
 //         * The hashcode of this entry's TGI, in accordance to the custom
 //         * {@link #equals equals} method.
-//         * 
+//         *
 //         * @return The hashcode of this entry's TGI.
 //         */
 //        @Override
@@ -1356,11 +1356,11 @@ public class DBPFFile {
         public String toString() {
             return this.getTGI().toString() + " " + this.getTGI().getLabel();
         }
-        
+
         /**
          * Retrieves the enclosing {@code DBPFFile} of this entry which
          * holds the data of this entry.
-         * 
+         *
          * @return the enclosing {@code DBPFFile}.
          */
         public DBPFFile getEnclosingDBPFFile() {
@@ -1407,17 +1407,17 @@ public class DBPFFile {
          *      TRUE, if only {@code DBPFRaw} types with no decompression or decoding
          *      are to be returned
          * @return The {@code  DBPFType}, never {@code null}.
-         * 
+         *
          * @see DBPFFile#getEntries()
          */
         public DBPFType createType(boolean onlyRawType) {
             byte[] data = this.createData();
             DBPFTGI tgi = this.getTGI();
-            
+
             if (onlyRawType) {
                 return Type.RAW.createType(data, tgi);
             }
-            
+
             DBPFType result = null;
             for (Type type : Type.values()) {
                 if (tgi.matches(type.getTGIMask())) {
@@ -1428,7 +1428,7 @@ public class DBPFFile {
             }
             throw new AssertionError("In any case, the creation of a raw type must succeed.");
         }
-        
+
         /**
          * Create a Cohort file from this entry. If its TGI does not specify
          * a Cohort or the Cohort could not be created, this will return null.
@@ -1444,7 +1444,7 @@ public class DBPFFile {
             }
             return null;
         }
-        
+
         /**
          * Create a Directory file from this entry. If its TGI does not specify
          * a Directory or the Directory could not be created, this will return null.
@@ -1508,7 +1508,7 @@ public class DBPFFile {
             }
             return null;
         }
-        
+
         /**
          * Create a LUA file from this entry. If its TGI does not specify
          * a LUA or the LUA could not be created, this will return null.
@@ -1557,7 +1557,7 @@ public class DBPFFile {
             }
             return null;
         }
-        
+
         /**
          * Create an S3D file from this entry. If its TGI does not specify
          * an S3D or the S3D could not be created, this will return null.
@@ -1627,7 +1627,7 @@ public class DBPFFile {
             }
             return data;
         }
-        
+
         @Override
         public ReadableByteChannel createDataChannel() {
             try {
@@ -1640,7 +1640,7 @@ public class DBPFFile {
                 return null;
             }
         }
-        
+
         /**
          * Reads directly from the file on the disk or from the mapped byte buffer.
          */
@@ -1648,15 +1648,15 @@ public class DBPFFile {
 
             private boolean isClosed = false;
             private final boolean isMapped;
-            
-            private final long offset = DirectDBPFEntry.this.offset; 
+
+            private final long offset = DirectDBPFEntry.this.offset;
             private final long size = DirectDBPFEntry.this.size;
             private long pos = 0;
-            
+
             private ByteBuffer buf;
             private final RandomAccessFile raf;
             private final FileChannel fc;
-            
+
             private DirectReadableByteChannel() throws FileNotFoundException, IOException {
                 if (DBPFFile.this.isMapped()) {
                     buf = DBPFFile.this.mappedByteBuffer.asReadOnlyBuffer();
@@ -1672,7 +1672,7 @@ public class DBPFFile {
                     fc.position(offset);
                 }
             }
-            
+
             @Override
             public void close() throws IOException {
                 this.isClosed = true;
@@ -1705,7 +1705,7 @@ public class DBPFFile {
                 if (!dst.hasArray()) {
                     throw new UnsupportedOperationException("The delivered ByteBuffer must have a backing array.");
                 }
-                
+
                 // actual reading
                 if (this.isMapped) {
                     int min = (int) Math.min(dst.remaining(), size - pos);

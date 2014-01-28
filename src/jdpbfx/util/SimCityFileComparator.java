@@ -7,12 +7,12 @@ import java.util.Comparator;
 /**
  * Comparator, prescribing the order by which the plugin files are loaded
  * into the game.
- * 
+ *
  * @author jondor
  * @author memo
  */
 public final class SimCityFileComparator implements Comparator<File> {
-    
+
     public static final FileFilter DBPF_FILE_FILTER = new FileFilter() {
         @Override
         public boolean accept(File f) {
@@ -27,10 +27,10 @@ public final class SimCityFileComparator implements Comparator<File> {
             }
         }
     };
-    
+
     private final File appDir, appPluginDir, userPluginDir;
     private final FileSystem fileSystem;
-    
+
     /**
      * Compares two files according to the order that is used by the game
      * to load plugin files. The implemented order is as follows:
@@ -87,10 +87,10 @@ public final class SimCityFileComparator implements Comparator<File> {
      * comparators. Two files "a.dat" and "A.dat" might or might not return 0
      * when compared.
      * </li></ul>
-     * 
+     *
      * @param appDir
      *          the main directory of the SimCity 4 application. This is
-     *          where the SimCity_1-5 dat files are expected to be found. 
+     *          where the SimCity_1-5 dat files are expected to be found.
      * @param appPluginDir
      *          the plugin directory inside the app dir.
      * @param userPluginDir
@@ -108,7 +108,7 @@ public final class SimCityFileComparator implements Comparator<File> {
         this.userPluginDir = userPluginDir;
         this.fileSystem = fileSystem;
     }
-    
+
     @Override
     public int compare(File f1, File f2) {
         File file1 = f1, file2 = f2;
@@ -123,7 +123,7 @@ public final class SimCityFileComparator implements Comparator<File> {
             file1 = new File(f1.getPath().toUpperCase());
             file2 = new File(f2.getPath().toUpperCase());
         }
-        
+
         FileLocation fl1 = FileLocation.NOWHERE, fl2 = FileLocation.NOWHERE;
         File temp1 = file1, temp2 = file2;
         while((temp1 = temp1.getParentFile()) != null) {
@@ -174,7 +174,7 @@ public final class SimCityFileComparator implements Comparator<File> {
                 break;
             }
         }
-        
+
         if(fl1.priority < fl2.priority)
             return -1;
         else if(fl1.priority > fl2.priority)
@@ -223,12 +223,12 @@ public final class SimCityFileComparator implements Comparator<File> {
                     return -1;
                 else if(count1 != 1 && count2 == 1)
                     return 1;
-                else 
+                else
                     return file1.getPath().compareTo(file2.getPath());
             }
         }
     }
-    
+
     private enum FileLocation {
         APP_DIR(0),
         APP_LOCALE_DIR(1),
@@ -236,14 +236,14 @@ public final class SimCityFileComparator implements Comparator<File> {
         APP_PLUGIN_DIR(3),
         USER_PLUGIN_DIR(4),
         NOWHERE(Integer.MAX_VALUE);
-        
+
         private int priority;
-        
+
         FileLocation(int priority) {
             this.priority = priority;
         }
     }
-    
+
     /**
      * Constants of supported file systems.
      */
@@ -255,7 +255,7 @@ public final class SimCityFileComparator implements Comparator<File> {
         /**
          * Unspecified file system.
          * This is discouraged. {@link #NTFS} should be used instead.
-         */ 
+         */
         UNSPECIFIED;
     }
 }

@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Signals that a file attempted to be read as DBPF file does not conform to
  * the DBPF file format.
- * 
+ *
  * @author memo
  */
 public class DBPFFileFormatException extends IOException {

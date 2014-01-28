@@ -11,7 +11,7 @@ public class DBPFRUL extends AbstractTextType {
 
     /**
      * Constructor.
-     * 
+     *
      * @param data
      *          the uncompressed byte data of the entry.
      * @param tgi

@@ -363,7 +363,7 @@ public class DBPFS3D extends DBPFType {
         }
         return verts;
     }
-    
+
     public List<Vert> getPolys(long frame) {
         if(!decoded)
             return null;

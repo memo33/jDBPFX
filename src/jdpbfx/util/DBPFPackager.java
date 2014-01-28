@@ -63,7 +63,7 @@ public class DBPFPackager {
         }
         return false;
     }
-    
+
     public static long getDecompressedSize(byte[] data) {
         long decompressedSize = -1L;
         if (data.length >= 9) {

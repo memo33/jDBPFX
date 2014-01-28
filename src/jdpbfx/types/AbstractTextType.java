@@ -7,14 +7,14 @@ import jdpbfx.DBPFType;
  * @author memo
  */
 abstract class AbstractTextType extends DBPFType {
-    
+
     char[] data;
     boolean modified;
 
     /**
      * Constructor which initializes the fields {@link #rawData}, {@link #data},
      * {@link #compressed}, {@link #modified} and {@link #tgi}.
-     * 
+     *
      * @param data
      *          the uncompressed byte data of the entry.
      * @param tgi
@@ -33,11 +33,11 @@ abstract class AbstractTextType extends DBPFType {
         this.compressed = compressed;
         this.modified = false;
     }
-    
+
     /**
      * Constructor that does not initialize any fields apart from the TGI, so
      * this has to be handled by the subclass.
-     * 
+     *
      * @param tgi the TGI.
      */
     AbstractTextType(DBPFTGI tgi) {

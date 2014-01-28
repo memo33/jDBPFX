@@ -56,7 +56,7 @@ public abstract class DBPFProperty {
 
     public void setCount(int count) {
         if(this.count == count) return;
-        
+
         Object oldValues = values;
         if(count == -1) {
             values = Array.newInstance(getReturnType(), 1);
