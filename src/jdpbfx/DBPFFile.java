@@ -165,8 +165,9 @@ public class DBPFFile {
     }
 
     private boolean addEntry(DirectDBPFEntry entry) {
-        if (entry == null)
+        if (entry == null) {
             return false;
+        }
         entryMap.put(entry.index, entry);
         tgiMap.put(entry.getTGI(), entry.index);
         return true;
@@ -274,9 +275,9 @@ public class DBPFFile {
             public Iterator<DirectDBPFEntry> iterator() {
                 return new Iterator<DBPFFile.DirectDBPFEntry>() {
 
-                    DirectDBPFEntry next = findNext();
-
                     Iterator<DirectDBPFEntry> delegate = DBPFFile.this.getEntries().iterator();
+
+                    DirectDBPFEntry next = findNext();
 
                     private DirectDBPFEntry findNext() {
                         while (delegate.hasNext()) {
