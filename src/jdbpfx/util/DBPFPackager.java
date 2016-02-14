@@ -82,6 +82,10 @@ public class DBPFPackager {
     /**
      * Copies data from source to destination array.<br>
      * The copy is byte by byte from srcPos to destPos and given length.
+     * If the destination array is not large enough a new array will be
+     * created.  Since the new array will be a different object, callers
+     * should always update their reference to the original dest array
+     * with the returned value.
      *
      * @param src
      *            The source array
@@ -93,8 +97,10 @@ public class DBPFPackager {
      *            The destination position
      * @param length
      *            The length
+     * @return
+     *            The destination array
      */
-    private void arrayCopy2(byte[] src, int srcPos, byte[] dest, int destPos, int length) {
+    private byte[] arrayCopy2(byte[] src, int srcPos, byte[] dest, int destPos, int length) {
         // This shouldn't occur, but to prevent errors
         if (dest.length < destPos + length) {
             if (debug) {
@@ -111,22 +117,30 @@ public class DBPFPackager {
         for (int i = 0; i < length; i++) {
             dest[destPos + i] = src[srcPos + i];
         }
+
+        return dest;
     }
 
     /**
-     * Copies data from array at destPos-srcPos to array at destPos.<br>
+     * Copies data from array at destPos-offset to array at destPos.<br>
+     * If the array is not large enough a new array will be
+     * created.  Since the new array will be a different object, callers
+     * should always update their reference to the original array
+     * with the returned value.
      *
      * @param array
      *            The array
-     * @param srcPos
+     * @param offset
      *            The position to copy from (reverse from end of array!)
      * @param destPos
      *            The position to copy to
      * @param length
      *            The length of data to copy
+     * @return
+     *            The array
      */
-    private void offsetCopy(byte[] array, int srcPos, int destPos, int length) {
-        srcPos = destPos - srcPos;
+    private byte[] offsetCopy(byte[] array, int offset, int destPos, int length) {
+        int srcPos = destPos - offset;
         // This shouldn't occur, but to prevent errors
         if (array.length < destPos + length) {
             if (debug) {
@@ -143,6 +157,7 @@ public class DBPFPackager {
         for (int i = 0; i < length; i++) {
             array[destPos + i] = array[srcPos + i];
         }
+        return array;
     }
 
     /**
@@ -256,7 +271,7 @@ public class DBPFPackager {
                             cData[writeIndex++] = (byte) (0xE0 + copyCount);
                             copyCount = 4 * copyCount + 4;
 
-                            arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
+                            cData = arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
                             lastReadIndex += copyCount;
                             writeIndex += copyCount;
                         }
@@ -296,7 +311,7 @@ public class DBPFPackager {
                         // }
 
                         // do the offset copy
-                        arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
+                        cData = arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
                         writeIndex += copyCount;
                         lastReadIndex += copyCount;
                         lastReadIndex += offsetCopyCount;
@@ -315,7 +330,7 @@ public class DBPFPackager {
                     cData[writeIndex++] = (byte) (0xE0 + copyCount);
                     copyCount = 4 * copyCount + 4;
 
-                    arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
+                    cData = arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
                     lastReadIndex += copyCount;
                     writeIndex += copyCount;
                 }
@@ -336,7 +351,7 @@ public class DBPFPackager {
                 // }
                 copyCount = index - lastReadIndex;
                 cData[writeIndex++] = (byte) (0xfc + copyCount);
-                arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
+                cData = arrayCopy2(dData, lastReadIndex, cData, writeIndex, copyCount);
                 writeIndex += copyCount;
                 lastReadIndex += copyCount;
 
@@ -420,13 +435,13 @@ public class DBPFPackager {
                         int control2 = cData[pos] & 0xFF;
                         pos++;
                         int numberOfPlainText = (control1 & 0x03);
-                        arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
+                        dData = arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
                         dpos += numberOfPlainText;
                         pos += numberOfPlainText;
 
                         int offset = ((control1 & 0x60) << 3) + (control2) + 1;
                         int numberToCopyFromOffset = ((control1 & 0x1C) >> 2) + 3;
-                        offsetCopy(dData, offset, dpos, numberToCopyFromOffset);
+                        dData = offsetCopy(dData, offset, dpos, numberToCopyFromOffset);
                         dpos += numberToCopyFromOffset;
 
                     } else if (control1 >= 128 && control1 <= 191) {
@@ -437,13 +452,13 @@ public class DBPFPackager {
                         pos++;
 
                         int numberOfPlainText = (control2 >> 6) & 0x03;
-                        arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
+                        dData = arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
                         dpos += numberOfPlainText;
                         pos += numberOfPlainText;
 
                         int offset = ((control2 & 0x3F) << 8) + (control3) + 1;
                         int numberToCopyFromOffset = (control1 & 0x3F) + 4;
-                        offsetCopy(dData, offset, dpos, numberToCopyFromOffset);
+                        dData = offsetCopy(dData, offset, dpos, numberToCopyFromOffset);
                         dpos += numberToCopyFromOffset;
                     } else if (control1 >= 192 && control1 <= 223) {
                         // 0xC0 - 0xDF
@@ -454,23 +469,23 @@ public class DBPFPackager {
                         pos++;
                         int control4 = cData[pos] & 0xFF;
                         pos++;
-                        arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
+                        dData = arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
                         dpos += numberOfPlainText;
                         pos += numberOfPlainText;
 
                         int offset = ((control1 & 0x10) << 12) + (control2 << 8) + (control3) + 1;
                         int numberToCopyFromOffset = ((control1 & 0x0C) << 6) + (control4) + 5;
-                        offsetCopy(dData, offset, dpos, numberToCopyFromOffset);
+                        dData = offsetCopy(dData, offset, dpos, numberToCopyFromOffset);
                         dpos += numberToCopyFromOffset;
                     } else if (control1 >= 224 && control1 <= 251) {
                         // 0xE0 - 0xFB
                         int numberOfPlainText = ((control1 & 0x1F) << 2) + 4;
-                        arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
+                        dData = arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
                         dpos += numberOfPlainText;
                         pos += numberOfPlainText;
                     } else {
                         int numberOfPlainText = (control1 & 0x03);
-                        arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
+                        dData = arrayCopy2(cData, pos, dData, dpos, numberOfPlainText);
                         dpos += numberOfPlainText;
                         pos += numberOfPlainText;
                     }
