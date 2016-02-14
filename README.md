@@ -23,6 +23,8 @@ classes, as described in the Javadoc comments.
  -  jondor
  -  Stefan79
  -  CasperVG
+ -  memo
+ -  marcboudreau
 
 License
 -------
