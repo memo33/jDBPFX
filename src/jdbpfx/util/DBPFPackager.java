@@ -100,7 +100,7 @@ public class DBPFPackager {
      * @return
      *            The destination array
      */
-    private byte[] arrayCopy2(byte[] src, int srcPos, byte[] dest, int destPos, int length) {
+    byte[] arrayCopy2(byte[] src, int srcPos, byte[] dest, int destPos, int length) {
         // This shouldn't occur, but to prevent errors
         if (dest.length < destPos + length) {
             if (debug) {
@@ -139,7 +139,7 @@ public class DBPFPackager {
      * @return
      *            The array
      */
-    private byte[] offsetCopy(byte[] array, int offset, int destPos, int length) {
+    byte[] offsetCopy(byte[] array, int offset, int destPos, int length) {
         int srcPos = destPos - offset;
         // This shouldn't occur, but to prevent errors
         if (array.length < destPos + length) {
