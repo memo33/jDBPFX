@@ -1,0 +1,10 @@
+language: java
+sudo: false
+jdk: openjdk8
+
+script:
+  - ant dist
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache

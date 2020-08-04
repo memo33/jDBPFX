@@ -1,6 +1,8 @@
 jDBPFX
 ======
 
+[![Build Status](https://travis-ci.org/memo33/jDBPFX.svg?branch=master)](https://travis-ci.org/memo33/jDBPFX)
+
 This Java library provides methods to read and write DBPF formatted files. It is
 mainly meant to support the DBPF file types used by SimCity 4.
 
